@@ -22,7 +22,7 @@
   <script>
   const svg = d3.select("svg")
     .attr("width", 900)
-    .attr("height", 900);
+    .attr("height", 2000);
 
   const tooltip = d3.select("body").append("div")
     .style("position", "absolute")
@@ -61,7 +61,7 @@
           .attr("cx", offsetX + i * spacing)
           .attr("cy", d.Jahr >= 2020 ? offsetY - 100 : yPosition)
           .attr("r", circleRadius)
-          .attr("fill", d.Geschlecht === "f" ? "#fde725" : "#440154")
+          .attr("fill", d.Geschlecht === "f" ? "#fde725" : "#21918c")
           .attr("stroke", d.Funktion.includes("Regierender Landammann") ? "#000" : "none")
           .attr("stroke-width", d.Funktion.includes("Regierender Landammann") ? 2 : 0)
           .on("mouseover", (event) => {
