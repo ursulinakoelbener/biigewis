@@ -6,22 +6,26 @@
   <title>Gender Ratio Projekt</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
   <link rel="stylesheet" href="https://unpkg.com/@primer/css@^20.0.0/dist/primer.css" />
-  <link rel="stylesheet" href="custom.css" />
+  <link rel="stylesheet" href="tufte.css"/>
 </head>
 <body class="p-4">
-
-  <header>
-    <h1 class="f00-light">Biigewis Date us Appezöll Innerrhode</h1>
-    <nav>
-      <a href="index.html">Startseite</a> |
-      <a href="politik.html">Politik</a> |
-    </nav>
-  </header>
+   <div id="header-placeholder"></div>
 
   <main class="mt-4">
     <p>Wöllkomm ond chomm zonis!</p>
     <p>Uf dere Siite wärid Date vo ond öbe Appezöll Innerrhode visuöll ufbereitet publiziet. Nehnts di wonde, wad au du no öbe Innerrhode leene chasch? </p>
   </main>
+  <div id="footer-placeholder"></div>
+
+  <script>
+    async function loadHTML(id, url) {
+      const resp = await fetch(url);
+      const text = await resp.text();
+      document.getElementById(id).innerHTML = text;
+    }
+    loadHTML('header-placeholder', 'header.html');
+    loadHTML('footer-placeholder', 'footer.html');
+  </script>
 
 </body>
 </html>
