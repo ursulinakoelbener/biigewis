@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Geschlechteranteile</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 40px;
+    }
+    svg {
+      max-width: 800px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <h2>Geschlechteranteile Standeskommission Appenzell I.Rh.</h2>
+  <svg></svg> 
+
+  <script>
+  const svg = d3.select("svg")
+    .attr("width", 900)
+    .attr("height", 600);
+
+  const tooltip = d3.select("body").append("div")
+    .style("position", "absolute")
+    .style("background", "#fff")
+    .style("padding", "6px 10px")
+    .style("border", "1px solid #ccc")
+    .style("border-radius", "6px")
+    .style("pointer-events", "none")
+    .style("display", "none");
+
+  const circleRadius = 12;
+  const spacing = 40;
+  const rowSpacing = 60;
+  const offsetX = 150;
+  const offsetY = 50;
+
+  d3.dsv(";", "standeskommission.csv").then(data => {
+    const grouped = d3.group(data, d => d.Jahr);
+
+    let rowIndex = 0;
+
+    for (const [jahr, personen] of grouped) {
+      svg.append("text")
+        .attr("x", offsetX - 100)
+        .attr("y", offsetY + rowIndex * rowSpacing + 5)
+        .text(jahr)
+        .attr("font-size", "14px");
+
+      svg.selectAll(".circle-" + jahr)
+        .data(personen)
+        .enter()
+        .append("circle")
+        .attr("cx", (d, i) => offsetX + i * spacing)
+        .attr("cy", offsetY + rowIndex * rowSpacing)
+        .attr("r", circleRadius)
+        .attr("fill", d => d.Geschlecht === "f" ? "#f4a940" : "#5bc0de")
+        .attr("stroke", d => d.Funktion.includes("Regierender Landammann") ? "#000" : "none")
+        .attr("stroke-width", d => d.Funktion.includes("Regierender Landammann") ? 2 : 0)
+        .on("mouseover", (event, d) => {
+          tooltip
+            .style("display", "block")
+            .html(`<strong>${d.Vorname} ${d.Nachname}</strong><br/>
+                    ${d.Funktion}<br/>
+                    ${d.Departement}`);
+        })
+        .on("mousemove", event => {
+          tooltip
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 20) + "px");
+        })
+        .on("mouseout", () => {
+          tooltip.style("display", "none");
+        });
+
+      rowIndex++;
+    }
+  });
+</script>
+
+</body>
+</html>
