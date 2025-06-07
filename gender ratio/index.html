@@ -22,7 +22,7 @@
   <script>
   const svg = d3.select("svg")
     .attr("width", 900)
-    .attr("height", 600);
+    .attr("height", 900);
 
   const tooltip = d3.select("body").append("div")
     .style("position", "absolute")
@@ -39,46 +39,76 @@
   const offsetX = 150;
   const offsetY = 50;
 
+  const circleDelay = 100;
+  const yearDelay = 800;
+
   d3.dsv(";", "standeskommission.csv").then(data => {
-    const grouped = d3.group(data, d => d.Jahr);
+    // Jahre sortieren: ältestes Jahr unten
+    const grouped = Array.from(d3.group(data, d => d.Jahr))
+      .sort((a, b) => d3.descending(+a[0], +b[0]));
 
-    let rowIndex = 0;
+    grouped.forEach(([jahr, personen], rowIndex) => {
+      const yPosition = offsetY + rowIndex * rowSpacing;
 
-    for (const [jahr, personen] of grouped) {
-      svg.append("text")
-        .attr("x", offsetX - 100)
-        .attr("y", offsetY + rowIndex * rowSpacing + 5)
-        .text(jahr)
-        .attr("font-size", "14px");
+      const drawCircle = (d, i) => {
+        const circle = svg.append("circle")
+          .attr("cx", offsetX + i * spacing)
+          .attr("cy", d.Jahr >= 2020 ? offsetY - 100 : yPosition)
+          .attr("r", circleRadius)
+          .attr("fill", d.Geschlecht === "f" ? "#f4a940" : "#5bc0de")
+          .attr("stroke", d.Funktion.includes("Regierender Landammann") ? "#000" : "none")
+          .attr("stroke-width", d.Funktion.includes("Regierender Landammann") ? 2 : 0)
+          .on("mouseover", (event) => {
+            tooltip
+              .style("display", "block")
+              .html(`<strong>${d.Vorname} ${d.Nachname}</strong><br/>
+                     ${d.Funktion}<br/>
+                     ${d.Departement}`);
+          })
+          .on("mousemove", event => {
+            tooltip
+              .style("left", (event.pageX + 10) + "px")
+              .style("top", (event.pageY - 20) + "px");
+          })
+          .on("mouseout", () => {
+            tooltip.style("display", "none");
+          });
 
-      svg.selectAll(".circle-" + jahr)
-        .data(personen)
-        .enter()
-        .append("circle")
-        .attr("cx", (d, i) => offsetX + i * spacing)
-        .attr("cy", offsetY + rowIndex * rowSpacing)
-        .attr("r", circleRadius)
-        .attr("fill", d => d.Geschlecht === "f" ? "#f4a940" : "#5bc0de")
-        .attr("stroke", d => d.Funktion.includes("Regierender Landammann") ? "#000" : "none")
-        .attr("stroke-width", d => d.Funktion.includes("Regierender Landammann") ? 2 : 0)
-        .on("mouseover", (event, d) => {
-          tooltip
-            .style("display", "block")
-            .html(`<strong>${d.Vorname} ${d.Nachname}</strong><br/>
-                    ${d.Funktion}<br/>
-                    ${d.Departement}`);
-        })
-        .on("mousemove", event => {
-          tooltip
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 20) + "px");
-        })
-        .on("mouseout", () => {
-          tooltip.style("display", "none");
-        });
+        if (d.Jahr >= 2020) {
+          circle.transition()
+            .delay(i * circleDelay)
+            .duration(600)
+            .ease(d3.easeBounceOut)
+            .attr("cy", yPosition);
+        }
+      };
 
-      rowIndex++;
-    }
+      if (jahr >= 2020) {
+        setTimeout(() => {
+          // Zeige Jahreszahl mit Kreisen
+          svg.append("text")
+            .attr("x", offsetX - 100)
+            .attr("y", yPosition + 5)
+            .attr("opacity", 0)
+            .text(jahr)
+            .attr("font-size", "14px")
+            .transition()
+            .duration(500)
+            .attr("opacity", 1);
+
+          personen.forEach((d, i) => drawCircle(d, i));
+        }, rowIndex * (personen.length * circleDelay + yearDelay));
+      } else {
+        // Ältere Jahre sofort anzeigen
+        svg.append("text")
+          .attr("x", offsetX - 100)
+          .attr("y", yPosition + 5)
+          .text(jahr)
+          .attr("font-size", "14px");
+
+        personen.forEach((d, i) => drawCircle(d, i));
+      }
+    });
   });
 </script>
 
