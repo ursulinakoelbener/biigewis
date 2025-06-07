@@ -12,6 +12,7 @@ html, body {
   font-size: 1.1em;
   background: none;
   z-index: 10;
+  margin-top: 4em; /* Abstand nach oben */
 }
 .sidebar-nav ul {
   list-style: none;
