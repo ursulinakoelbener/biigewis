@@ -48,6 +48,11 @@
     const grouped = Array.from(d3.group(data, d => d.Jahr))
       .sort((a, b) => d3.descending(+a[0], +b[0]));
 
+    // Separate Liste für Animation-Reihenfolge (nur Jahre ab 2020, aufsteigend)
+    const animationOrder = grouped
+      .filter(([jahr]) => +jahr >= 2020)
+      .sort((a, b) => d3.ascending(+a[0], +b[0]));
+
     grouped.forEach(([jahr, personen], rowIndex) => {
       const yPosition = offsetY + rowIndex * rowSpacing;
 
@@ -56,7 +61,7 @@
           .attr("cx", offsetX + i * spacing)
           .attr("cy", d.Jahr >= 2020 ? offsetY - 100 : yPosition)
           .attr("r", circleRadius)
-          .attr("fill", d.Geschlecht === "f" ? "#f4a940" : "#5bc0de")
+          .attr("fill", d.Geschlecht === "f" ? "#fde725" : "#440154")
           .attr("stroke", d.Funktion.includes("Regierender Landammann") ? "#000" : "none")
           .attr("stroke-width", d.Funktion.includes("Regierender Landammann") ? 2 : 0)
           .on("mouseover", (event) => {
@@ -85,6 +90,10 @@
       };
 
       if (jahr >= 2020) {
+        
+        // Finde Animation-Index basierend auf aufsteigender Reihenfolge
+        const animationRowIndex = animationOrder.findIndex(([y]) => y === jahr);
+
         setTimeout(() => {
           // Zeige Jahreszahl mit Kreisen
           svg.append("text")
@@ -98,7 +107,7 @@
             .attr("opacity", 1);
 
           personen.forEach((d, i) => drawCircle(d, i));
-        }, rowIndex * (personen.length * circleDelay + yearDelay));
+        }, animationRowIndex * (personen.length * circleDelay + yearDelay));
       } else {
         // Ältere Jahre sofort anzeigen
         svg.append("text")
