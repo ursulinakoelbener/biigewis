@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Geschlechteranteile</title>
+  <title>gender ratio</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     body {
@@ -22,7 +22,6 @@
   <script>
   const svg = d3.select("svg")
     .attr("width", 900)
-    .attr("height", 2000);
 
   const tooltip = d3.select("body").append("div")
     .style("position", "absolute")
@@ -52,6 +51,10 @@
     const animationOrder = grouped
       .filter(([jahr]) => +jahr >= 2020)
       .sort((a, b) => d3.ascending(+a[0], +b[0]));
+
+    // SVG-Höhe basierend auf Anzahl Jahre berechnen
+    const totalHeight = offsetY + (grouped.length * rowSpacing) + offsetBottom;
+    svg.attr("height", totalHeight);
 
     grouped.forEach(([jahr, personen], rowIndex) => {
       const yPosition = offsetY + rowIndex * rowSpacing;
