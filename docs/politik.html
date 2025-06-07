@@ -3,22 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <title>gender ratio</title>
+  <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
+  <link rel="stylesheet" href="custom.css" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 40px;
-    }
-    svg {
-      max-width: 800px;
-      height: auto;
-    }
-  </style>
 </head>
 <body>
-  <h2>Geschlechteranteile Standeskommission Appenzell I.Rh.</h2>
-  <svg></svg> 
+  <div id="header-placeholder"></div>
+  <main>
+    <h2>Geschlechteranteile Standeskommission Appenzell I.Rh.</h2>
+    <svg></svg>
+  </main>
+  <div id="footer-placeholder"></div>
 
+  <script>
+    async function loadHTML(id, url) {
+      const resp = await fetch(url);
+      const text = await resp.text();
+      document.getElementById(id).innerHTML = text;
+    }
+    loadHTML('header-placeholder', 'header.html');
+    loadHTML('footer-placeholder', 'footer.html');
+  </script>
   <script>
   const svg = d3.select("svg")
     .attr("width", 900)
