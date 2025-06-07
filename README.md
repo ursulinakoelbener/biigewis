@@ -18,6 +18,6 @@ Das Projekt wird als statische Website via **GitHub Pages** veröffentlicht.
 Falls du das Projekt lokal ausführen möchtest:
 
 ```bash
-git clone https://github.com/deinbenutzername/dein-projektname.git
-cd dein-projektname
+git clone https://github.com/ursulinakoelbener/d3-gender-ratio.git
+cd d3-gender-ratio
 # Öffne index.html im Browser
