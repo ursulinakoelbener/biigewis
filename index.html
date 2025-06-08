@@ -6,23 +6,19 @@
   <title>Biigewis</title>
   <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
   <link rel="stylesheet" href="custom.css" />
+  <script src="bundle.js"></script>
+  <script src="https://unpkg.com/react-dom@19.1.0/cjs/react-dom.production.js"></script>
+  <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
 </head>
-
-<script src="bundle.js"></script>
-<script src="https://unpkg.com/react-dom@19.1.0/cjs/react-dom.production.js"></script>
-<script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
-
 <body>
-    <!-- React Entry Point -->
-    <div id="root"></div>
+  <!-- React Entry Point -->
+  <div id="root"></div>
 
-    <!-- Vite: Lädt automatisch src/main.jsx -->
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  <!-- Vite: Lädt automatisch src/main.jsx -->
+  <script type="module" src="/src/main.jsx"></script>
 
-<body>
-   <div id="header-placeholder"></div>
-   <main>
+  <div id="header-placeholder"></div>
+  <main>
     <p>hesch gwesst?</p>
   </main>
   <div id="footer-placeholder"></div>
@@ -36,6 +32,5 @@
     loadHTML('header-placeholder', 'header.html');
     loadHTML('footer-placeholder', 'footer.html');
   </script>
-
 </body>
 </html>
