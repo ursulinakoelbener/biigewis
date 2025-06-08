@@ -60,7 +60,7 @@
   const circleDelay = 150;
   const yearDelay = 800;
 
-  d3.dsv(";", "standeskommission.csv").then(data => {
+  d3.dsv(";", "standeskommission_veränderungen.csv").then(data => {
     // Jahre sortieren: ältestes Jahr unten
     const grouped = Array.from(d3.group(data, d => d.Jahr))
       .sort((a, b) => d3.descending(+a[0], +b[0]));
@@ -83,7 +83,7 @@
           .attr("cy", d.Jahr >= 2020 ? offsetY - 100 : yPosition)
           .attr("r", circleRadius)
           .attr("fill", d.Geschlecht === "f" ? "#fde725" : "#21918c")
-          .attr("stroke", d.Funktion.includes("Regierender Landammann") ? "#000" : "none")
+          .attr("stroke", d.Funktion.includes("Regierender Landammann") ? "#440154" : "none")
           .attr("stroke-width", d.Funktion.includes("Regierender Landammann") ? 2 : 0)
           .on("mouseover", (event) => {
             tooltip
