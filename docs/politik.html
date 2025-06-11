@@ -29,13 +29,13 @@
   <div id="footer-placeholder"></div>
 
   <script>
-    async function loadHTML(id, url) {
-      const resp = await fetch(url);
-      const text = await resp.text();
-      document.getElementById(id).innerHTML = text;
-    }
-    loadHTML('header-placeholder', 'header.html');
-    loadHTML('footer-placeholder', 'footer.html');
+  async function loadHTML(id, url) {
+    const resp = await fetch(url);
+    const text = await resp.text();
+    document.getElementById(id).innerHTML = text;
+  }
+  loadHTML('header-placeholder', 'components/header.html');
+  loadHTML('footer-placeholder', 'components/footer.html');
   </script>
   <script>
   const svg = d3.select("svg")
@@ -60,7 +60,7 @@
   const circleDelay = 150;
   const yearDelay = 800;
 
-  d3.dsv(";", "standeskommission_veränderungen.csv").then(data => {
+  d3.dsv(";", "standeskommission.csv").then(data => {
     // Jahre sortieren: ältestes Jahr unten
     const grouped = Array.from(d3.group(data, d => d.Jahr))
       .sort((a, b) => d3.descending(+a[0], +b[0]));
