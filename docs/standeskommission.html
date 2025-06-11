@@ -12,8 +12,8 @@
   <div class="sidebar-nav">
     <nav>
       <ul>
-        <li><a href="#gender-ratio-stk">Visualisierung</a></li>
-        <li><a href="#anderer-abschnitt">Anderer Abschnitt</a></li>
+        <li><a href="#gender-ratio-stk">Zusammensetzung</a></li>
+        <li><a href="#mitglieder">Aktuelle Mitglieder</a></li>
         <!-- Weitere Links -->
       </ul>
     </nav>
@@ -25,7 +25,15 @@
       Mit der Maus können über die Kreise weitere Details (Name, Funktion und zuständiges Departement) zu den Mitgliedern entdeckt werden.
       Die Daten stammen aus den Staatskalendern, die das Landesarchiv Appenzell I.Rh. <a href="https://archives-quickaccess.ch/search/laai/staatskalender"> digitalisiert </a> hat.</p>    
   <svg></svg>
-  </main>
+    
+    <h2 id="mitglieder">Aktuelle Mitglieder</h3>
+    <p>Informationen zu den aktuellen Mitgliedern der Standeskommission Appenzell I.Rh. finden sich 
+      auf der <a href="https://www.ai.ch/politik/standeskommission#mitglieder">Website des Kantons</a>.</p>
+
+</main>
+
+
+  
   <div id="footer-placeholder"></div>
 
   <script>
@@ -39,7 +47,9 @@
   </script>
   <script>
   const svg = d3.select("svg")
-    .attr("width", 900)
+    .attr("width", "100%")
+    .attr("viewBox", "0 0 900 600") // 600 ist ein Platzhalter, siehe unten
+    .attr("preserveAspectRatio", "xMinYMin meet");
 
   const tooltip = d3.select("body").append("div")
     .style("position", "absolute")
@@ -51,7 +61,7 @@
     .style("display", "none");
 
   const circleRadius = 12;
-  const spacing = 40;
+  const spacing = 28;
   const rowSpacing = 40;
   const offsetX = 150;
   const offsetY = 50;
@@ -72,7 +82,8 @@
 
     // SVG-Höhe basierend auf Anzahl Jahre berechnen
     const totalHeight = offsetY + (grouped.length * rowSpacing) + offsetBottom;
-    svg.attr("height", totalHeight);
+    svg.attr("height", totalHeight)
+       .attr("viewBox", `0 0 900 ${totalHeight}`);
 
     grouped.forEach(([jahr, personen], rowIndex) => {
       const yPosition = offsetY + rowIndex * rowSpacing;
