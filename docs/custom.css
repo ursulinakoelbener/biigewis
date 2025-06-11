@@ -50,3 +50,15 @@ svg {
   height: auto;
   display: block;
 }
+
+header nav a {
+  font-size: 1.3em;
+}
+
+footer {
+  text-align: left;
+  border-top: none;
+}
+footer p {
+  margin-left: 0;
+}
