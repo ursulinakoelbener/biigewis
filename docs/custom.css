@@ -32,7 +32,7 @@ html, body {
   border-bottom: 1px solid #21918c;
 }
 main {
-  margin-left: 220px; /* Platz für die Sidebar */
+  margin-top: 0;
 }
 @media (max-width: 900px) {
   .sidebar-nav {
@@ -51,6 +51,9 @@ svg {
   display: block;
 }
 
+header {
+  margin-bottom: 0;
+}
 header nav a {
   font-size: 1.3em;
 }
