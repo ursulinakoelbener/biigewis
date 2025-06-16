@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sitzordnung Grosser Rat 2025</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body { font-family: sans-serif; }
+    .tooltip {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 6px;
+      font-size: 12px;
+      pointer-events: none;
+      display: none;
+    }
+    svg circle {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sitzordnung Grosser Rat Appenzell I.Rh. (2025)</h1>
+  <svg width="900" height="600"></svg>
+  <div class="tooltip"></div>
+
+  <script>
+    const csvUrl = 'data/grosser-rat.csv'; // lokal laden oder durch absolute URL ersetzen
+    const cellSize = 80;
+
+    const farben = {
+      "A": "#1f77b4",
+      "S-R": "#ff7f0e",
+      "S-H": "#2ca02c",
+      "G": "#d62728",
+      "O": "#9467bd"
+    };
+
+    const svg = d3.select("svg");
+    const tooltip = d3.select(".tooltip");
+
+    d3.csv(csvUrl).then(data => {
+      data.forEach(d => {
+        d.row = +d.row;
+        d.col = +d.col;
+      });
+
+      svg.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", d => d.col * cellSize + cellSize / 2)
+        .attr("cy", d => d.row * cellSize + cellSize / 2)
+        .attr("r", 25)
+        .attr("fill", d => farben[d.wahlkreis] || "#ccc")
+        .attr("stroke", "#333")
+        .on("mouseover", function(event, d) {
+          tooltip
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px")
+            .style("display", "block")
+            .html(`<strong>${d.name}</strong><br/>Wahlkreis: ${d.wahlkreis}`);
+        })
+        .on("mouseout", () => tooltip.style("display", "none"));
+
+      svg.selectAll("text")
+        .data(data)
+        .enter()
+        .append("text")
+        .attr("x", d => d.col * cellSize + cellSize / 2)
+        .attr("y", d => d.row * cellSize + cellSize / 2 + 4)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "10px")
+        .attr("fill", "white")
+        .text(d => d.name.split(" ").map(p => p[0]).join(""));
+    });
+  </script>
+</body>
+</html>
