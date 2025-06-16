@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Sitzordnung Grosser Rat 2025</title>
+  <title>Grosser Rat</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     body { font-family: sans-serif; }
@@ -60,7 +60,7 @@
             .style("left", (event.pageX + 10) + "px")
             .style("top", (event.pageY - 10) + "px")
             .style("display", "block")
-            .html(`<strong>${d.name}</strong><br/>Wahlkreis: ${d.wahlkreis}`);
+            .html(`<strong>${d.name}</strong><br/>Bezirk: ${d.Bezirk}<br/>Funktion: ${d.Funktion}<br/>Zugehörigkeit politische Vereinigung / Verband: ${d.Zugehörigkeit}<br/>Wahlkreis: ${d.wahlkreis}`);
         })
         .on("mouseout", () => tooltip.style("display", "none"));
 
