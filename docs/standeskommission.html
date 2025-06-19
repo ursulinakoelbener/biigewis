@@ -31,13 +31,15 @@
     <p> <i>Zu den Daten:</i> Die Daten stammen aus den Staatskalendern der kantonalen Verwaltung, die vom Landesarchiv Appenzell I.Rh. <a href="https://archives-quickaccess.ch/search/laai/staatskalender"> 
         digitalisiert </a> wurden. Der dabei entstandene Datensatz kann <a href="data/standeskommission.csv" download>als CSV heruntergeladen</a> werden.</p>    
   <svg></svg>
-    <!--
-    <h3 id="dauer">Amtsdauer</h3>
-    <p>Informationen zu den aktuellen Mitgliedern der Standeskommission Appenzell I.Rh. finden sich 
-      auf der <a href="https://www.ai.ch/politik/standeskommission#mitglieder">Website des Kantons</a>.</p>
-    -->
-
-</main>
+    
+    <h3 id="dauer">Amtszeiten</h3>
+    <p>Quellen:
+Suter, Carl, Die Standeskommission des Kantons Appenzell I.Rh., in: Innerrhoder Geschichtsfreund 31 (1988)
+Staatskalender 1979-2012
+Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
+.</p>
+     <object type="image/svg+xml" data="standeskommission_personen.svg" width="100%" height="600"></object>
+  </main>
   
   <div id="footer-placeholder"></div>
 
@@ -50,6 +52,7 @@
   loadHTML('header-placeholder', 'components/header.html');
   loadHTML('footer-placeholder', 'components/footer.html');
   </script>
+  
   <script>
   const svg = d3.select("svg")
     .attr("width", "100%")
