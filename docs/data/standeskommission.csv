@@ -1,238 +1,363 @@
-﻿Jahr;Nachname;Vorname;Geschlecht;Funktion;Departement
-2025;Dähler;Roland;m;Regierender Landammann;Volkswirtschaftsdepartement
-2025;Koller;Angela;f;Frau stillstehender Landammann;Erziehungsdepartement
-2025;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2025;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement
-2025;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2025;Dörig;Hans;m;Bauherr;Bau- und Umweltdepartement
-2025;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2024;Dähler;Roland;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2024;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement
-2024;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2024;Eberle;Ruedi;m;Frau Statthalter;Finanzdepartement
-2024;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2024;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement
-2024;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2023;Dähler;Roland;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2023;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement
-2023;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2023;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement
-2023;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2023;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement
-2023;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2022;Dähler;Roland;m;Regierender Landammann;Volkswirtschaftsdepartement
-2022;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement
-2022;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2022;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement
-2022;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2022;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement
-2022;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2021;Dähler;Roland;m;Regierender Landammann;Volkswirtschaftsdepartement
-2021;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement
-2021;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2021;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement
-2021;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2021;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement
-2021;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2020;Dähler;Roland;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2020;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement
-2020;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2020;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement
-2020;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2020;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement
-2020;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2019;Dähler;Roland;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2019;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement
-2019;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2019;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement
-2019;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2019;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement
-2019;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2018;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement
-2018;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement
-2018;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2018;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement
-2018;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2018;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement
-2018;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2017;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement
-2017;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement
-2017;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2017;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement
-2017;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2017;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement
-2017;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2016;Fässler;Daniel;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2016;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement
-2016;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2016;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement
-2016;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2016;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2016;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2015;Fässler;Daniel;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2015;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement
-2015;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2015;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement
-2015;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2015;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2015;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2014;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement
-2014;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement
-2014;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2014;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement
-2014;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2014;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2014;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2013;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement
-2013;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement
-2013;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2013;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement
-2013;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2013;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2013;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2012;Fässler;Daniel;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2012;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement
-2012;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2012;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement
-2012;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2012;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2012;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2011;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement
-2011;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement
-2011;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2011;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement
-2011;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2011;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2011;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2010;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement
-2010;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement
-2010;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement
-2010;Moser;Sepp;m;Säckelmeister;Finanzdepartement
-2010;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2010;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2010;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2009;Fässler;Daniel;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2009;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement
-2009;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement
-2009;Moser;Sepp;m;Säckelmeister;Finanzdepartement
-2009;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2009;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2009;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2008;Fässler;Daniel;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2008;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement
-2008;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement
-2008;Moser;Sepp;m;Säckelmeister;Finanzdepartement
-2008;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2008;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2008;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2007;Koster;Bruno;m;Regierender Landammann;Volkswirtschaftsdepartement
-2007;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement
-2007;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement
-2007;Moser;Sepp;m;Säckelmeister;Finanzdepartement
-2007;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2007;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2007;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2006;Koster;Bruno;m;Regierender Landammann;Volkswirtschaftsdepartement
-2006;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement
-2006;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement
-2006;Wyser;Paul;m;Säckelmeister;Finanzdepartement
-2006;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2006;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2006;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2005;Koster;Bruno;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2005;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement
-2005;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement
-2005;Wyser;Paul;m;Säckelmeister;Finanzdepartement
-2005;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2005;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement
-2005;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2004;Koster;Bruno;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2004;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement
-2004;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement
-2004;Wyser;Paul;m;Säckelmeister;Finanzdepartement
-2004;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2004;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement
-2004;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2003;Koster;Bruno;m;Regierender Landammann;Volkswirtschaftsdepartement
-2003;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement
-2003;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement
-2003;Wyser;Paul;m;Säckelmeister;Finanzdepartement
-2003;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2003;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement
-2003;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2002;Koster;Bruno;m;Regierender Landammann;Volkswirtschaftsdepartement
-2002;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement
-2002;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement
-2002;Wyser;Paul;m;Säckelmeister;Finanzdepartement
-2002;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2002;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement
-2002;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2001;Koster;Bruno;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2001;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement
-2001;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement
-2001;Wyser;Paul;m;Säckelmeister;Finanzdepartement
-2001;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2001;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement
-2001;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-2000;Koster;Bruno;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-2000;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement
-2000;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement
-2000;Wyser;Paul;m;Säckelmeister;Finanzdepartement
-2000;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-2000;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement
-2000;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-1999;Loepfe;Arthur;m;Regierender Landammann;Volkswirtschaftsdepartement
-1999;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement
-1999;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement
-1999;Koster;Bruno;m;Säckelmeister;Finanzdepartement
-1999;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-1999;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement
-1999;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-1998;Loepfe;Arthur;m;Regierender Landammann;Volkswirtschaftsdepartement
-1998;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement
-1998;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement
-1998;Metzler-Arnold;Ruth;f;Frau Säckelmeister;Finanzdepartement
-1998;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-1998;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement
-1998;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-1997;Loepfe;Arthur;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-1997;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement
-1997;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement
-1997;Metzler-Arnold;Ruth;f;Frau Säckelmeister;Finanzdepartement
-1997;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-1997;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement
-1997;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement
-1996;Loepfe;Arthur;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-1996;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement
-1996;Hörler;Hans;m;Statthalter;Fürsorgedepartement & Sanitätsdepartement
-1996;Metzler-Arnold;Ruth;f;Frau Säckelmeister;Finanzdepartement
-1996;Inauen;Josef;m;Landeshauptmann;Landwirtschaftsdepartement
-1996;Sutter;Hans;m;Bauherr;Baudepartement
-1996;Wild;Alfred;m;Landesfähnrich;Justiz- und Polizeidepartement & Militärdepartement
-1995;Loepfe;Arthur;m;Regierender Landammann;Volkswirtschaftsdepartement
-1995;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement
-1995;Hörler;Hans;m;Statthalter;Sanitätsdepartement
-1995;Fässler;Charly;m;Säckelmeister;Finanzdepartement
-1995;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-1995;Sutter;Hans;m;Bauherr;Baudepartement
-1995;Wild;Alfred;m;Landesfähnrich;Justiz- und Polizeidepartement
-1995;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement
-1995;Bischofberger;Walter;m;Zeugherr;Militärdepartement
-1994;Loepfe;Arthur;m;Regierender Landammann;Volkswirtschaftsdepartement
-1994;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement
-1994;Hörler;Hans;m;Statthalter;Sanitätsdepartement
-1994;Fässler;Charly;m;Säckelmeister;Finanzdepartement
-1994;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-1994;Sutter;Hans;m;Bauherr;Baudepartement
-1994;Wild;Alfred;m;Landesfähnrich;Justiz- und Polizeidepartement
-1994;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement
-1994;Bischofberger;Walter;m;Zeugherr;Militärdepartement
-1993;Loepfe;Arthur;m;Stillstehender Landammann;Volkswirtschaftsdepartement
-1993;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement
-1993;Hörler;Hans;m;Statthalter;Sanitätsdepartement
-1993;Fässler;Charly;m;Säckelmeister;Finanzdepartement
-1993;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement
-1993;Sutter;Hans;m;Bauherr;Baudepartement
-1993;Wild;Alfred;m;Landesfähnrich;Justiz- und Polizeidepartement
-1993;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement
-1993;Bischofberger;Walter;m;Zeugherr;Militärdepartement
+﻿Jahr;Nachname;Vorname;Geschlecht;Funktion;Departement;Reihenfolge
+2025;Dähler;Roland;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2025;Koller;Angela;f;Frau stillstehender Landammann;Erziehungsdepartement;2
+2025;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2025;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement;4
+2025;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2025;Dörig;Hans;m;Bauherr;Bau- und Umweltdepartement;6
+2025;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2024;Dähler;Roland;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2024;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement;2
+2024;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2024;Eberle;Ruedi;m;Frau Statthalter;Finanzdepartement;4
+2024;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2024;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement;6
+2024;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2023;Dähler;Roland;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2023;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement;2
+2023;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2023;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement;4
+2023;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2023;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement;6
+2023;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2022;Dähler;Roland;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2022;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement;2
+2022;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2022;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement;4
+2022;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2022;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement;6
+2022;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2021;Dähler;Roland;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2021;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement;2
+2021;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2021;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement;4
+2021;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2021;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement;6
+2021;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2020;Dähler;Roland;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2020;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement;2
+2020;Rüegg Bless;Monika;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2020;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement;4
+2020;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2020;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement;6
+2020;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2019;Dähler;Roland;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2019;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement;2
+2019;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2019;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement;4
+2019;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2019;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement;6
+2019;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2018;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2018;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement;2
+2018;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2018;Eberle;Ruedi;m;Säckelmeister;Finanzdepartement;4
+2018;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2018;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement;6
+2018;Signer;Jakob;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2017;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2017;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement;2
+2017;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2017;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement;4
+2017;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2017;Ulmann;Ruedi;m;Bauherr;Bau- und Umweltdepartement;6
+2017;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2016;Fässler;Daniel;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2016;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement;2
+2016;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2016;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement;4
+2016;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2016;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2016;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2015;Fässler;Daniel;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2015;Inauen;Roland;m;Regierender Landammann;Erziehungsdepartement;2
+2015;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2015;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement;4
+2015;Müller;Stefan;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2015;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2015;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2014;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2014;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement;2
+2014;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2014;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement;4
+2014;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2014;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2014;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2013;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2013;Inauen;Roland;m;Stillstehender Landammann;Erziehungsdepartement;2
+2013;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2013;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement;4
+2013;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2013;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2013;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2012;Fässler;Daniel;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2012;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+2012;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2012;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement;4
+2012;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2012;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2012;Bürki;Martin;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2011;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2011;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+2011;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2011;Rechsteiner;Thomas;m;Säckelmeister;Finanzdepartement;4
+2011;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2011;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2011;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2010;Fässler;Daniel;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2010;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+2010;Fässler;Antonia;f;Frau Statthalter;Gesundheits- und Sozialdepartement;3
+2010;Moser;Sepp;m;Säckelmeister;Finanzdepartement;4
+2010;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2010;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2010;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2009;Fässler;Daniel;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2009;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+2009;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement;3
+2009;Moser;Sepp;m;Säckelmeister;Finanzdepartement;4
+2009;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2009;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2009;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2008;Fässler;Daniel;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2008;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+2008;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement;3
+2008;Moser;Sepp;m;Säckelmeister;Finanzdepartement;4
+2008;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2008;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2008;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2007;Koster;Bruno;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2007;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+2007;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement;3
+2007;Moser;Sepp;m;Säckelmeister;Finanzdepartement;4
+2007;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2007;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2007;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2006;Koster;Bruno;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2006;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+2006;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement;3
+2006;Wyser;Paul;m;Säckelmeister;Finanzdepartement;4
+2006;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2006;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2006;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2005;Koster;Bruno;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2005;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+2005;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement;3
+2005;Wyser;Paul;m;Säckelmeister;Finanzdepartement;4
+2005;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2005;Sutter;Stefan;m;Bauherr;Bau- und Umweltdepartement;6
+2005;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2004;Koster;Bruno;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2004;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+2004;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement;3
+2004;Wyser;Paul;m;Säckelmeister;Finanzdepartement;4
+2004;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2004;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement;6
+2004;Looser;Melchior;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2003;Koster;Bruno;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2003;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+2003;Ebneter;Werner;m;Statthalter;Gesundheits- und Sozialdepartement;3
+2003;Wyser;Paul;m;Säckelmeister;Finanzdepartement;4
+2003;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2003;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement;6
+2003;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2002;Koster;Bruno;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+2002;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+2002;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement;3
+2002;Wyser;Paul;m;Säckelmeister;Finanzdepartement;4
+2002;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2002;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement;6
+2002;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2001;Koster;Bruno;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2001;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+2001;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement;3
+2001;Wyser;Paul;m;Säckelmeister;Finanzdepartement;4
+2001;Koller;Lorenz;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2001;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement;6
+2001;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+2000;Koster;Bruno;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+2000;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+2000;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement;3
+2000;Wyser;Paul;m;Säckelmeister;Finanzdepartement;4
+2000;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+2000;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement;6
+2000;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+1999;Loepfe;Arthur;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+1999;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+1999;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement;3
+1999;Koster;Bruno;m;Säckelmeister;Finanzdepartement;4
+1999;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1999;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement;6
+1999;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+1998;Loepfe;Arthur;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+1998;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+1998;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement;3
+1998;Metzler-Arnold;Ruth;f;Frau Säckelmeister;Finanzdepartement;4
+1998;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1998;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement;6
+1998;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+1997;Loepfe;Arthur;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+1997;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+1997;Hörler;Hans;m;Statthalter;Gesundheits- und Sozialdepartement;3
+1997;Metzler-Arnold;Ruth;f;Frau Säckelmeister;Finanzdepartement;4
+1997;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1997;Sutter;Hans;m;Bauherr;Bau- und Umweltdepartement;6
+1997;Wild;Alfred;m;Landesfähnrich;Justiz-, Polizei- und Militärdepartement;7
+1996;Loepfe;Arthur;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+1996;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+1996;Hörler;Hans;m;Statthalter;Fürsorgedepartement & Sanitätsdepartement;3
+1996;Metzler-Arnold;Ruth;f;Frau Säckelmeister;Finanzdepartement;4
+1996;Inauen;Josef;m;Landeshauptmann;Landwirtschaftsdepartement;5
+1996;Sutter;Hans;m;Bauherr;Baudepartement;6
+1996;Wild;Alfred;m;Landesfähnrich;Justiz- und Polizeidepartement & Militärdepartement;7
+1995;Loepfe;Arthur;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+1995;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+1995;Hörler;Hans;m;Statthalter;Sanitätsdepartement;3
+1995;Fässler;Charly;m;Säckelmeister;Finanzdepartement;4
+1995;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1995;Sutter;Hans;m;Bauherr;Baudepartement;6
+1995;Wild;Alfred;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1995;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1995;Bischofberger;Walter;m;Zeugherr;Militärdepartement;9
+1994;Loepfe;Arthur;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+1994;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+1994;Hörler;Hans;m;Statthalter;Sanitätsdepartement;3
+1994;Fässler;Charly;m;Säckelmeister;Finanzdepartement;4
+1994;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1994;Sutter;Hans;m;Bauherr;Baudepartement;6
+1994;Wild;Alfred;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1994;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1994;Bischofberger;Walter;m;Zeugherr;Militärdepartement;9
+1993;Loepfe;Arthur;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+1993;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+1993;Hörler;Hans;m;Statthalter;Sanitätsdepartement;3
+1993;Fässler;Charly;m;Säckelmeister;Finanzdepartement;4
+1993;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1993;Sutter;Hans;m;Bauherr;Baudepartement;6
+1993;Wild;Alfred;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1993;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1993;Bischofberger;Walter;m;Zeugherr;Militärdepartement;9
+1992;Graf;Beat;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+1992;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+1992;Hörler;Hans;m;Statthalter;Sanitätsdepartement;3
+1992;Fässler;Charly;m;Säckelmeister;Finanzdepartement;4
+1992;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1992;Sutter;Hans;m;Bauherr;Baudepartement;6
+1992;Wild;Alfred;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1992;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1992;Bischofberger;Walter;m;Zeugherr;Militärdepartement;9
+1991;Graf;Beat;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+1991;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+1991;Manser;Hans;m;Statthalter;Sanitätsdepartement;3
+1991;Fässler;Charly;m;Säckelmeister;Finanzdepartement;4
+1991;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1991;Neff;Emil;m;Bauherr;Baudepartement;6
+1991;Wild;Alfred;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1991;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1991;Bischofberger;Walter;m;Zeugherr;Militärdepartement;9
+1990;Graf;Beat;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+1990;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+1990;Manser;Hans;m;Statthalter;Sanitätsdepartement;3
+1990;Fässler;Charly;m;Säckelmeister;Finanzdepartement;4
+1990;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1990;Neff;Emil;m;Bauherr;Baudepartement;6
+1990;Wild;Alfred;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1990;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1990;Bischofberger;Walter;m;Zeugherr;Militärdepartement;9
+1989;Graf;Beat;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+1989;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+1989;Manser;Hans;m;Statthalter;Sanitätsdepartement;3
+1989;Fässler;Charly;m;Säckelmeister;Finanzdepartement;4
+1989;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1989;Neff;Emil;m;Bauherr;Baudepartement;6
+1989;Zeller;Paul;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1989;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1989;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1988;Graf;Beat;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+1988;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+1988;Manser;Hans;m;Statthalter;Sanitätsdepartement;3
+1988;Fässler;Charly;m;Säckelmeister;Finanzdepartement;4
+1988;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1988;Neff;Emil;m;Bauherr;Baudepartement;6
+1988;Zeller;Paul;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1988;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1988;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1987;Graf;Beat;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+1987;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+1987;Manser;Hans;m;Statthalter;Sanitätsdepartement;3
+1987;Dörig;Albert;m;Säckelmeister;Finanzdepartement;4
+1987;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1987;Neff;Emil;m;Bauherr;Baudepartement;6
+1987;Zeller;Paul;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1987;Sutter;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1987;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1986;Graf;Beat;m;Regierender Landammann;Volkswirtschaftsdepartement;1
+1986;Schmid-Sutter;Carlo;m;Stillstehender Landammann;Erziehungsdepartement;2
+1986;Manser;Hans;m;Statthalter;Sanitätsdepartement;3
+1986;Dörig;Albert;m;Säckelmeister;Finanzdepartement;4
+1986;Inauen;Josef;m;Landeshauptmann;Landwirtschaftsdepartement;5
+1986;Neff;Emil;m;Bauherr;Baudepartement;6
+1986;Zeller;Paul;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1986;Manser;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1986;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1985;Graf;Beat;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+1985;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+1985;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1985;Dörig;Albert;m;Säckelmeister;Finanzdepartement;4
+1985;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1985;Neff;Emil;m;Bauherr;Baudepartement;6
+1985;Zeller;Paul;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1985;Manser;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1985;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1984;Breitenmoser;Franz;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+1984;Schmid-Sutter;Carlo;m;Regierender Landammann;Erziehungsdepartement;2
+1984;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1984;Dörig;Albert;m;Säckelmeister;Finanzdepartement;4
+1984;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1984;Neff;Emil;m;Bauherr;Baudepartement;6
+1984;Zeller;Paul;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1984;Manser;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1984;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1983;Breitenmoser;Franz;m;Stillstehender Landammann;Volkswirtschaftsdepartement;1
+1983;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1983;Dörig;Albert;m;Säckelmeister;Finanzdepartement;4
+1983;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1983;Neff;Emil;m;Bauherr;Baudepartement;6
+1983;Zeller;Paul;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1983;Manser;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1983;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1982;Breitenmoser;Franz;m;Stillstehender Landammann;Volkswirtschaftsdepartement;2
+1982;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1982;Dörig;Albert;m;Säckelmeister;Finanzdepartement;4
+1982;Inauen;Josef;m;Landeshauptmann;Land- und Forstwirtschaftsdepartement;5
+1982;Neff;Emil;m;Bauherr;Baudepartement;6
+1982;Zeller;Paul;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1982;Manser;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1982;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1981;Breitenmoser;Franz;m;Stillstehender Landammann;Volkswirtschaftsdepartement;3
+1981;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1981;Dörig;Albert;m;Säckelmeister;Finanzdepartement;4
+1981;Neff;Emil;m;Bauherr;Baudepartement;6
+1981;Zeller;Paul;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1981;Manser;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1981;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1980;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1980;Breitenmoser;Franz;m;Stillstehender Landammann;Volkswirtschaftsdepartement;4
+1980;Dörig;Albert;m;Säckelmeister;Finanzdepartement;4
+1980;Neff;Emil;m;Bauherr;Baudepartement;6
+1980;Zeller;Paul;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1980;Manser;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1980;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1979;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1979;Zeller;Paul;m;Landesfähnrich;Justiz- und Polizeidepartement;7
+1979;Manser;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1979;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1978;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1978;Manser;Josef;m;Armleutsäckelmeister;Fürsorgedepartement;8
+1978;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1977;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1977;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1976;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1976;Breu;Hans;m;Zeugherr;Militärdepartement;9
+1975;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1974;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
+1973;Sutter;Alfred;m;Statthalter;Sanitätsdepartement;3
