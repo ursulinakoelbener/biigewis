@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Standeskommission</title>
+  <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
+  <link rel="stylesheet" href="custom.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  
+  <main>
+    <h2 id="bezirk-ratio-stk">Zusammensetzung nach Bezirk</h2>
+
+    <p>Nachfolgend ist die Zusammensetzung der Standeskommission, der Exekutive des Kantons Appenzell Innerrhoden, seit 1984 visualisiert. Die verschiedenen Farben repräsentieren die Wohnbezirke der jeweiligen Personen.</p>
+       
+    <p> <i>Zur Visualisierung:</i> Durch Bewegen der Maus über die Kreise lassen sich Name, Funktion und zuständiges Departement der ejeweiligen Mitglieder anzeigen.</p>
+    
+    <p> <i>Zu den Daten:</i> Die Daten stammen aus den Staatskalendern der kantonalen Verwaltung, die vom Landesarchiv Appenzell I.Rh. <a href="https://archives-quickaccess.ch/search/laai/staatskalender"> 
+        digitalisiert </a> wurden. Der dabei entstandene Datensatz kann <a href="data/standeskommission.csv" download>als CSV heruntergeladen</a> werden.</p>    
+  <svg></svg>
+    
+    <p>Quellen:
+Suter, Carl, Die Standeskommission des Kantons Appenzell I.Rh., in: Innerrhoder Geschichtsfreund 31 (1988)
+Staatskalender 1979-2012
+Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
+.</p>
+ <svg id="dauer" width="1200" height="600"></svg>
+
+  </main>
+  
+  <div id="footer-placeholder"></div>
+
+  <script>
+  async function loadHTML(id, url) {
+    const resp = await fetch(url);
+    const text = await resp.text();
+    document.getElementById(id).innerHTML = text;
+  }
+  loadHTML('header-placeholder', 'components/header.html');
+  loadHTML('footer-placeholder', 'components/footer.html');
+  </script>
+  
+  <script>
+  const tooltip = d3.select("body").append("div")
+    .style("position", "absolute")
+    .style("background", "#fff")
+    .style("padding", "6px 10px")
+    .style("border", "1px solid #ccc")
+    .style("border-radius", "6px")
+    .style("pointer-events", "none")
+    .style("display", "none");
+
+  const circleRadius = 12;
+  const spacing = 40; // Abstand zwischen den Kreisen
+  const rowSpacing = 28;  // Abstand zwischen den Zeilen
+  const offsetX = 150;  
+  const offsetY = 50;
+  const offsetBottom = 50;
+
+  const circleDelay = 150;
+  const yearDelay = 800;
+
+  d3.dsv(";", "data/standeskommission.csv").then(data => {
+    const svg = d3.select("svg")
+      .attr("width", "100%")
+      .attr("viewBox", "0 0 900 600") // 600 ist ein Platzhalter, siehe unten
+      .attr("preserveAspectRatio", "xMinYMin meet");
+
+    // Jahre sortieren: ältestes Jahr unten
+    const grouped = Array.from(d3.group(data, d => d.Jahr))
+      .sort((a, b) => d3.descending(+a[0], +b[0]));
+
+    // Separate Liste für Animation-Reihenfolge (nur Jahre ab 2020, aufsteigend)
+    const animationOrder = grouped
+      .filter(([jahr]) => +jahr >= 2020)
+      .sort((a, b) => d3.ascending(+a[0], +b[0]));
+
+    // SVG-Höhe basierend auf Anzahl Jahre berechnen
+    const totalHeight = offsetY + (grouped.length * rowSpacing) + offsetBottom;
+    svg.attr("height", totalHeight)
+       .attr("viewBox", `0 0 900 ${totalHeight}`);
+
+    // Erstelle eine Farbskala für die Bezirke
+    const bezirke = Array.from(new Set(data.map(d => d.Bezirk)));
+    const color = d3.scaleOrdinal(d3.schemeViridis[bezirke.length]).domain(bezirke);
+
+    grouped.forEach(([jahr, personen], rowIndex) => {
+      const yPosition = offsetY + rowIndex * rowSpacing;
+
+      const drawCircle = (d, i) => {
+        const circle = svg.append("circle")
+          .attr("cx", offsetX + i * spacing)
+          .attr("cy", d.Jahr >= 2020 ? offsetY - 100 : yPosition)
+          .attr("r", circleRadius)
+          .attr("fill", d => color(d.Bezirk))
+          .on("mouseover", (event) => {
+            tooltip
+              .style("display", "block")
+              .html(`<strong>${d.Vorname} ${d.Nachname}</strong><br/>
+                     ${d.Funktion}<br/>
+                     ${d.Departement}`);
+          })
+          .on("mousemove", event => {
+            tooltip
+              .style("left", (event.pageX + 10) + "px")
+              .style("top", (event.pageY - 20) + "px");
+          })
+          .on("mouseout", () => {
+            tooltip.style("display", "none");
+          });
+
+        if (d.Jahr >= 2020) {
+          circle.transition()
+            .delay(i * circleDelay)
+            .duration(600)
+            .ease(d3.easeBounceOut)
+            .attr("cy", yPosition);
+        }
+      };
+
+      if (jahr >= 2020) {
+        
+        // Finde Animation-Index basierend auf aufsteigender Reihenfolge
+        const animationRowIndex = animationOrder.findIndex(([y]) => y === jahr);
+
+        setTimeout(() => {
+          // Zeige Jahreszahl mit Kreisen
+          svg.append("text")
+            .attr("x", offsetX - 100)
+            .attr("y", yPosition + 5)
+            .attr("opacity", 0)
+            .text(jahr)
+            .attr("font-size", "14px")
+            .transition()
+            .duration(500)
+            .attr("opacity", 1);
+
+          personen.forEach((d, i) => drawCircle(d, i));
+        }, animationRowIndex * (personen.length * circleDelay + yearDelay));
+      } else {
+        // Ältere Jahre sofort anzeigen
+        svg.append("text")
+          .attr("x", offsetX - 100)
+          .attr("y", yPosition + 5)
+          .text(jahr)
+          .attr("font-size", "14px");
+
+        personen.forEach((d, i) => drawCircle(d, i));
+      }
+    });
+  });
+</script>
+
+<script>
+    // SVG und Margin
+    const svg = d3.select("#dauer"),
+          width = +svg.attr("width"),
+          height = +svg.attr("height"),
+          margin = {top: 40, right: 300, bottom: 40, left: 200};
+
+    // CSV laden
+    d3.csv("data/standeskommission.csv", d3.autoType).then(data => {
+      // Personen-ID
+      data.forEach(d => d.Person = d.Vorname + " " + d.Nachname);
+
+      // Funktionen als Kategorien
+      const funktionen = Array.from(new Set(data.map(d => d.Funktion)));
+      const personen = Array.from(new Set(data.map(d => d.Person)));
+
+      // Skalen
+      const x = d3.scaleLinear()
+        .domain(d3.extent(data, d => d.Jahr))
+        .range([margin.left, width - margin.right]);
+
+      const y = d3.scalePoint()
+        .domain(funktionen)
+        .range([margin.top, height - margin.bottom])
+        .padding(0.5);
+
+      const color = d3.scaleOrdinal()
+        .domain(personen)
+        .range(d3.schemeTableau20);
+
+      // Achsen
+      svg.append("g")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x).tickFormat(d3.format("d")));
+
+      svg.append("g")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y));
+
+      // Punkte
+      svg.selectAll(".dot")
+        .data(data)
+        .join("circle")
+        .attr("class", "dot")
+        .attr("cx", d => x(d.Jahr))
+        .attr("cy", d => y(d.Funktion))
+        .attr("r", 8)
+        .attr("fill", d => color(d.Person));
+
+      // Legende
+      const legend = svg.append("g")
+        .attr("class", "legend")
+        .attr("transform", `translate(${width - margin.right + 20},${margin.top})`);
+
+      personen.forEach((person, i) => {
+        legend.append("circle")
+          .attr("cx", 0)
+          .attr("cy", i * 22)
+          .attr("r", 8)
+          .attr("fill", color(person))
+          .attr("stroke", "#222");
+        legend.append("text")
+          .attr("x", 18)
+          .attr("y", i * 22 + 5)
+          .text(person);
+      });
+    });
+  </script>
+
+</body>
+</html>
