@@ -89,7 +89,7 @@ Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
       const drawCircle = (d, i) => {
         const circle = svg.append("circle")
           .attr("cx", offsetX + i * spacing)
-          .attr("cy", d.Jahr >= 2020 ? offsetY - 100 : yPosition)
+          .attr("cy", d.Jahr >= 2022 ? offsetY - 100 : yPosition)
           .attr("r", circleRadius)
           .attr("fill", d.Geschlecht === "f" ? "#fde725" : "#21918c")
           .attr("stroke", d.Funktion.includes("Regierender Landammann") ? "#440154" : "none")
@@ -110,7 +110,7 @@ Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
             tooltip.style("display", "none");
           });
 
-        if (d.Jahr >= 2020) {
+        if (d.Jahr >= 2022) {
           circle.transition()
             .delay(i * circleDelay)
             .duration(600)
@@ -119,7 +119,7 @@ Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
         }
       };
 
-      if (jahr >= 2020) {
+      if (jahr >= 2022) {
         
         // Finde Animation-Index basierend auf aufsteigender Reihenfolge
         const animationRowIndex = animationOrder.findIndex(([y]) => y === jahr);
