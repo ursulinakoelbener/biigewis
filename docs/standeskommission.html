@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Standeskommission 2026</title>
+  <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
+  <link rel="stylesheet" href="custom.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    .member {
+      cursor: pointer;
+    }
+    .tooltip {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 12px;
+      pointer-events: none;
+      display: none;
+      z-index: 10;
+    }
+    .legend {
+      margin-top: 1rem;
+      font-size: 13px;
+    }
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-right: 1rem;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+  <main>
+    <h2>Standeskommission 2026</h2>
+
+    <p>Die Standeskommission des Kantons Appenzell Innerrhoden für das Jahr 2026.</p>
+    <p>Die Mitglieder sind nach Geschlecht dargestellt; durch Bewegen der Maus über die Kreise erscheinen Funktion und Departement.</p>
+
+    <svg id="chart" width="900" height="420"></svg>
+    <div class="tooltip"></div>
+
+    <div class="legend">
+      <span><i class="dot" style="background:#21918c;"></i>Männlich</span>
+      <span><i class="dot" style="background:#fde725;"></i>Weiblich</span>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script>
+    async function loadHTML(id, url) {
+      const resp = await fetch(url);
+      const text = await resp.text();
+      document.getElementById(id).innerHTML = text;
+    }
+    loadHTML('header-placeholder', 'components/header.html');
+    loadHTML('footer-placeholder', 'components/footer.html');
+  </script>
+
+  <script>
+    const svg = d3.select('#chart');
+    const tooltip = d3.select('.tooltip');
+
+    d3.dsv(';', 'data/standeskommission.csv').then(data => {
+      const members = data
+        .filter(d => +d.Jahr === 2026)
+        .sort((a, b) => +a.Reihenfolge - +b.Reihenfolge);
+
+      const width = 900;
+      const height = 420;
+      const margin = { top: 40, right: 40, bottom: 40, left: 80 };
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+
+      const x = d3.scaleBand()
+        .domain(members.map(d => d.Vorname + ' ' + d.Nachname))
+        .range([margin.left, width - margin.right])
+        .padding(0.35);
+
+      const y = d3.scaleLinear()
+        .domain([0, 1])
+        .range([height - margin.bottom, margin.top]);
+
+      svg.append('g')
+        .attr('transform', `translate(0, ${height - margin.bottom})`)
+        .call(d3.axisBottom(x))
+        .selectAll('text')
+        .style('font-size', '12px')
+        .attr('transform', 'rotate(-18)')
+        .style('text-anchor', 'end');
+
+      svg.append('g')
+        .attr('transform', `translate(${margin.left}, 0)`)
+        .call(d3.axisLeft(y).ticks(0));
+
+      svg.selectAll('.member')
+        .data(members)
+        .join('circle')
+        .attr('class', 'member')
+        .attr('cx', d => x(d.Vorname + ' ' + d.Nachname) + x.bandwidth() / 2)
+        .attr('cy', d => y(0.5))
+        .attr('r', 26)
+        .attr('fill', d => d.Geschlecht === 'f' ? '#fde725' : '#21918c')
+        .attr('stroke', '#333')
+        .attr('stroke-width', 1.2)
+        .on('mouseover', function(event, d) {
+          tooltip
+            .style('display', 'block')
+            .style('left', (event.pageX + 12) + 'px')
+            .style('top', (event.pageY - 12) + 'px')
+            .html(`<strong>${d.Vorname} ${d.Nachname}</strong><br>${d.Funktion}<br>${d.Departement}<br>Bezirk: ${d.Bezirk}`);
+        })
+        .on('mousemove', function(event) {
+          tooltip
+            .style('left', (event.pageX + 12) + 'px')
+            .style('top', (event.pageY - 12) + 'px');
+        })
+        .on('mouseout', function() {
+          tooltip.style('display', 'none');
+        });
+
+      svg.selectAll('.member-label')
+        .data(members)
+        .join('text')
+        .attr('class', 'member-label')
+        .attr('x', d => x(d.Vorname + ' ' + d.Nachname) + x.bandwidth() / 2)
+        .attr('y', d => y(0.5) + 5)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '11px')
+        .attr('fill', '#fff')
+        .text(d => d.Vorname.split('')[0] + d.Nachname.split('')[0]);
+    });
+  </script>
+</body>
+</html>
