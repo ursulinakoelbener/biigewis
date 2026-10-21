@@ -136,7 +136,6 @@
         <label>
           Merkmal
           <select id="color-select" style="margin-left:0.5rem;">
-            <option value="default">default</option>
             <option value="Bezirk">Bezirk</option>
             <option value="Geschlecht">Geschlecht</option>
             <option value="Zugehörigkeit">Zugehörigkeit</option>
@@ -173,26 +172,38 @@
 
     const state = {
       arrangement: "default",
-      district: "all",
       colorMode: "default"
     };
 
     d3.dsv(";", "data/grosser-rat.csv").then(data => {
       const rows = data
-        .map(d => ({
-          Jahr: Number(d.Wahljahr),
-          Funktion: (d.Funktion || "").trim(),
-          Geschlecht: (d.Geschlecht || "").trim().toLowerCase(),
-          Name: (d["Name und Vorname"] || "").trim(),
-          Bezirk: (d.Bezirk || "").trim(),
-          Zugehörigkeit: (d.Zugehörigkeit || "").trim(),
-          Amtsdauer: Number(d.Amtsdauer || 0)
-        }))
-        .filter(d => !Number.isNaN(d.Jahr) && d.Jahr > 0 && d.Name !== "");
+        .map(d => {
+          const bezirkValue = (d["Bezirk "] || d.Bezirk || "").trim();
+          return {
+            Jahr: Number(d.Wahljahr),
+            Funktion: (d.Funktion || "").trim(),
+            Geschlecht: (d.Geschlecht || "").trim().toLowerCase(),
+            Name: (d["Name und Vorname"] || "").trim(),
+            Bezirk: bezirkValue,
+            Zugehörigkeit: (d.Zugehörigkeit || "").trim(),
+            Amtsdauer: Number(d.Amtsdauer || 0)
+          };
+        })
+        .filter(d => !Number.isNaN(d.Jahr) && d.Jahr > 0 && d.Name !== "" && d.Bezirk !== "");
 
-      const districtOrder = [...new Set(rows.map(d => d.Bezirk))].sort();
+      const districtOrder = [...new Set(rows.map(d => d.Bezirk))].sort((a, b) => a.localeCompare(b, 'de', { sensitivity: 'base' }));
+
       const arrangementSelect = document.getElementById("arrangement-select");
       const colorSelect = document.getElementById("color-select");
+
+      function syncColorFromArrangement() {
+        if (state.arrangement === "default") {
+          state.colorMode = "default";
+        } else {
+          state.colorMode = state.arrangement;
+        }
+        colorSelect.value = state.colorMode;
+      }
 
       function labelFor(value, mode) {
         if (mode === "Geschlecht") return value === "f" ? "Frau" : "Mann";
@@ -311,7 +322,7 @@
         return lines.slice(0, 3).join("\n");
       }
 
-      function drawGroupLabel(svg, cx, y, labelText, width = 220) {
+      function drawGroupLabel(svg, cx, y, labelText) {
         const lines = wrapLabel(labelText, 22).split("\n");
         svg.append("text")
           .attr("x", cx)
@@ -331,11 +342,7 @@
         const svg = d3.select("#distribution-svg");
         svg.selectAll("*").remove();
 
-        const selectedDistricts = state.district === "all"
-          ? districtOrder
-          : districtOrder.filter(name => name === state.district);
-
-        const groups = selectedDistricts.map(name => ({
+        const groups = districtOrder.map(name => ({
           key: name,
           members: rows
             .filter(d => d.Bezirk === name)
@@ -378,7 +385,7 @@
               .on("mouseout", () => tooltip.style("display", "none"));
           });
 
-          drawGroupLabel(svg, groupX + 50, labelBaseY, group.key, groupWidth);
+          drawGroupLabel(svg, groupX + 50, labelBaseY, group.key);
         });
 
         svg.attr("viewBox", `0 0 ${width} ${height}`)
@@ -389,8 +396,7 @@
         const svg = d3.select("#distribution-svg");
         svg.selectAll("*").remove();
 
-        const filtered = state.district === "all" ? rows : rows.filter(d => d.Bezirk === state.district);
-        const groups = groupAndSort(filtered, state.arrangement);
+        const groups = groupAndSort(rows, state.arrangement);
         const maxMembers = Math.max(...groups.map(g => g.members.length), 1);
         const maxRows = Math.max(1, Math.ceil(maxMembers / 6));
         const groupWidth = 230;
@@ -424,7 +430,7 @@
               .on("mouseout", () => tooltip.style("display", "none"));
           });
 
-          drawGroupLabel(svg, groupX + groupWidth / 2, labelBaseY, labelFor(group.key, state.arrangement), groupWidth);
+          drawGroupLabel(svg, groupX + groupWidth / 2, labelBaseY, labelFor(group.key, state.arrangement));
         });
 
         svg.attr("viewBox", `0 0 ${width} ${height}`)
@@ -442,19 +448,10 @@
           return;
         }
 
-        if (state.arrangement === "Zugehörigkeit") {
-          renderCategoryLayout();
-          return;
-        }
-
         const svg = d3.select("#distribution-svg");
         svg.selectAll("*").remove();
 
-        const filtered = state.district === "all"
-          ? rows
-          : rows.filter(d => d.Bezirk === state.district);
-
-        const groups = groupAndSort(filtered, state.arrangement);
+        const groups = groupAndSort(rows, state.arrangement);
         const maxMembers = Math.max(...groups.map(g => g.members.length), 1);
         const maxRows = Math.max(1, Math.ceil(maxMembers / 6));
         const colsPerGroup = Math.min(8, Math.max(4, Math.ceil(Math.sqrt(maxMembers))));
@@ -489,20 +486,16 @@
               .on("mouseout", () => tooltip.style("display", "none"));
           });
 
-          drawGroupLabel(svg, groupX + groupWidth / 2, labelBaseY, labelFor(group.key, state.arrangement), groupWidth);
+          drawGroupLabel(svg, groupX + groupWidth / 2, labelBaseY, labelFor(group.key, state.arrangement));
         });
 
         svg.attr("viewBox", `0 0 ${width} ${height}`)
            .attr("preserveAspectRatio", "xMinYMin meet");
       }
 
-      districtSelect.addEventListener("change", (event) => {
-        state.district = event.target.value;
-        renderDistribution();
-      });
-
       arrangementSelect.addEventListener("change", (event) => {
         state.arrangement = event.target.value;
+        syncColorFromArrangement();
         renderDistribution();
       });
 
@@ -511,6 +504,7 @@
         renderDistribution();
       });
 
+      syncColorFromArrangement();
       renderDistribution();
     });
   </script>
