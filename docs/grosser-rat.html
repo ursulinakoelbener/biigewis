@@ -2,10 +2,245 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0; url=standeskommission.html" />
-  <title>Weiterleitung</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grosser Rat</title>
+  <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
+  <link rel="stylesheet" href="custom.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .title-block {
+      margin-bottom: 0.75rem;
+    }
+
+    .intro-text {
+      margin: 0 0 1rem 0;
+      max-width: 1000px;
+      font-size: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(180px, 0.7fr);
+      gap: 1rem;
+      align-items: start;
+      justify-content: center;
+    }
+
+    .chart-col {
+      min-width: 0;
+      position: sticky;
+      top: 0;
+      align-self: start;
+    }
+
+    .chart-note {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: #333;
+    }
+
+    .chart-note p {
+      margin: 0 0 0.5rem 0;
+    }
+
+    .chart-note p:last-child {
+      margin-bottom: 0;
+    }
+
+    .text-col {
+      margin-top: 10px;
+      background: #f8f8f8;
+      border-left: 3px solid #d8d8d8;
+      padding: 1rem 1.1rem;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      max-width: 100%;
+      justify-self: stretch;
+    }
+
+    .text-col p {
+      margin-top: 0;
+      margin-bottom: 0.7rem;
+    }
+
+    .text-col p:last-child {
+      margin-bottom: 0;
+    }
+
+    .stat-list {
+      margin: 0.7rem 0 0;
+      padding-left: 1.1rem;
+    }
+
+    .stat-list li {
+      margin-bottom: 0.25rem;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      height: auto;
+      background: transparent;
+    }
+
+    @media (max-width: 900px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .text-col {
+        margin-top: 0;
+        border-left: none;
+        border-top: 3px solid #d8d8d8;
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <p>Diese Seite wurde entfernt. <a href="standeskommission.html">Zur Standeskommission 2026</a></p>
+  <div id="header-placeholder"></div>
+
+  <main>
+    <div class="title-block">
+      <h2>Grosser Rat</h2>
+      <p class="intro-text">Die Zusammensetzung des Grossrats visualisiert. Jede Kugel steht für ein Grossratsmitglied; Männer sind türkis, Frauen gelb eingefärbt.</p>
+    </div>
+
+    <div class="content-grid">
+      <div class="chart-col">
+        <svg id="grossrat-svg"></svg>
+
+        <div class="chart-note">
+          <p><i>Zu den Daten:</i> Der Datensatz stammt aus den verfügbaren Wahl- und Amtsdaten für den Grossrat Appenzell Innerrhoden und liegt als CSV vor. Der Datensatz kann <a href="data/grosser-rat.csv" download>als CSV heruntergeladen</a> werden.</p>
+        </div>
+      </div>
+
+      <aside class="text-col">
+        <p><i>Zur Visualisierung:</i> Die Kreise zeigen einzelne Grossratsmitglieder pro Wahljahr. Beim Bewegen der Maus über einen Kreis erscheinen Name, Funktion, Bezirk und Zugehörigkeit.</p>
+
+        <ul class="stat-list">
+          <li><strong>Jahre:</strong> 2007–2025</li>
+          <li><strong>Mitglieder:</strong> <span id="member-count">0</span></li>
+          <li><strong>Frauen:</strong> <span id="female-count">0</span></li>
+          <li><strong>Männer:</strong> <span id="male-count">0</span></li>
+        </ul>
+      </aside>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script>
+    async function loadHTML(id, url) {
+      const resp = await fetch(url);
+      const text = await resp.text();
+      document.getElementById(id).innerHTML = text;
+    }
+    loadHTML('header-placeholder', 'components/header.html');
+    loadHTML('footer-placeholder', 'components/footer.html');
+  </script>
+
+  <script>
+    const tooltip = d3.select("body").append("div")
+      .style("position", "absolute")
+      .style("background", "#fff")
+      .style("padding", "6px 10px")
+      .style("border", "1px solid #ccc")
+      .style("border-radius", "6px")
+      .style("pointer-events", "none")
+      .style("display", "none");
+
+    d3.dsv(";", "data/grosser-rat.csv").then(data => {
+      const rows = data
+        .map(d => ({
+          Jahr: Number(d.Wahljahr),
+          Funktion: (d.Funktion || "").trim(),
+          Geschlecht: (d.Geschlecht || "").trim().toLowerCase(),
+          Name: (d["Name und Vorname"] || "").trim(),
+          Bezirk: (d.Bezirk || "").trim(),
+          Zugehörigkeit: (d.Zugehörigkeit || "").trim(),
+          Amtsdauer: Number(d.Amtsdauer || 0)
+        }))
+        .filter(d => !Number.isNaN(d.Jahr));
+
+      const grouped = Array.from(d3.group(rows, d => d.Jahr))
+        .sort((a, b) => d3.ascending(a[0], b[0]));
+
+      const widest = d3.max(grouped, ([, members]) => members.length) || 1;
+      const width = 1100;
+      const height = 120 + grouped.length * 70;
+      const left = 150;
+      const top = 45;
+      const xStep = Math.min(36, (width - left - 80) / Math.max(widest, 1));
+
+      const svg = d3.select("#grossrat-svg")
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("preserveAspectRatio", "xMinYMin meet");
+
+      svg.append("g")
+        .selectAll("line")
+        .data(grouped)
+        .join("line")
+        .attr("x1", left - 20)
+        .attr("x2", width - 30)
+        .attr("y1", (_, i) => top + i * 70 + 20)
+        .attr("y2", (_, i) => top + i * 70 + 20)
+        .attr("stroke", "#e5e5e5")
+        .attr("stroke-width", 1);
+
+      grouped.forEach(([jahr, members], rowIndex) => {
+        const y = top + rowIndex * 70 + 20;
+
+        svg.append("text")
+          .attr("x", 30)
+          .attr("y", y + 5)
+          .attr("font-size", 14)
+          .attr("fill", "#333")
+          .text(jahr);
+
+        members.forEach((member, i) => {
+          const x = left + i * xStep;
+
+          svg.append("circle")
+            .attr("cx", x)
+            .attr("cy", y)
+            .attr("r", 9)
+            .attr("fill", member.Geschlecht === "f" ? "#f1d34c" : "#2f9ea4")
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 1.5)
+            .on("mouseover", (event) => {
+              tooltip
+                .style("display", "block")
+                .html(`<strong>${member.Name}</strong><br/>${member.Funktion}<br/>${member.Bezirk}<br/>${member.Zugehörigkeit}`);
+            })
+            .on("mousemove", (event) => {
+              tooltip
+                .style("left", `${event.pageX + 12}px`)
+                .style("top", `${event.pageY - 12}px`);
+            })
+            .on("mouseout", () => {
+              tooltip.style("display", "none");
+            });
+        });
+      });
+
+      document.getElementById("member-count").textContent = rows.length;
+      document.getElementById("female-count").textContent = rows.filter(d => d.Geschlecht === "f").length;
+      document.getElementById("male-count").textContent = rows.filter(d => d.Geschlecht === "m").length;
+    });
+  </script>
 </body>
 </html>
