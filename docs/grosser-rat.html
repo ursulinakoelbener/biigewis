@@ -129,7 +129,7 @@
 
       <div class="controls" style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
         <label>
-          Anordnung
+          Sitzverteilung
           <select id="arrangement-select" style="margin-left:0.5rem;">
             <option value="default">Alle (schwarz)</option>
             <option value="Bezirk">Bezirk</option>
@@ -274,22 +274,14 @@
         const colsPerGroup = Math.min(8, Math.max(4, Math.ceil(Math.sqrt(maxMembers))));
         const groupWidth = 220;
         const startX = 90;
-        const startY = 80;
+        const startY = 30;
         const rowGap = 26;
         const colGap = 28;
         const width = Math.max(900, startX + groups.length * groupWidth + 80);
-        const height = 220 + Math.ceil(maxMembers / colsPerGroup) * rowGap + 40;
+        const height = 180 + Math.ceil(maxMembers / colsPerGroup) * rowGap + 40;
 
         groups.forEach((group, groupIndex) => {
           const groupX = startX + groupIndex * groupWidth;
-
-          svg.append("text")
-            .attr("x", groupX + groupWidth / 2)
-            .attr("y", 24)
-            .attr("text-anchor", "middle")
-            .attr("font-size", 12)
-            .attr("fill", "#333")
-            .text(labelFor(group.key, state.arrangement));
 
           group.members.forEach((member, memberIndex) => {
             const col = memberIndex % colsPerGroup;
@@ -308,6 +300,14 @@
               .on("mousemove", event => hoverTooltip(event, member))
               .on("mouseout", () => tooltip.style("display", "none"));
           });
+
+          svg.append("text")
+            .attr("x", groupX + groupWidth / 2)
+            .attr("y", startY + (Math.ceil(group.members.length / colsPerGroup) * rowGap) + 35)
+            .attr("text-anchor", "middle")
+            .attr("font-size", 12)
+            .attr("fill", "#333")
+            .text(labelFor(group.key, state.arrangement));
         });
 
         svg.attr("viewBox", `0 0 ${width} ${height}`)
