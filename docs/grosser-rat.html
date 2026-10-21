@@ -116,22 +116,16 @@
   <main>
     <div class="title-block">
       <h2>Grosser Rat</h2>
-      <p class="intro-text">Die Zusammensetzung des Grossrats visualisiert. In der ersten Ansicht sind alle Mitglieder in einem Block aufgereiht. In der Sitzverteilungsansicht können Sie nach Bezirk und Farbmerkmal filtern.</p>
+      <p class="intro-text">Die Zusammensetzung des Grossrats visualisiert. In der ersten Ansicht sind alle Mitglieder in einem Block aufgereiht. Sie können die Sitzverteilung nach verschiedenen Merkmalen darstellen.</p>
     </div>
 
-    <section class="overview-section">
-      <h3>Alle Grossratsmitglieder</h3>
-      <svg id="overview-svg"></svg>
-    </section>
-
     <section class="distribution-section">
-      <h3>Sitzverteilung</h3>
 
       <div class="controls" style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
         <label>
           Sitzverteilung
           <select id="arrangement-select" style="margin-left:0.5rem;">
-            <option value="default">Alle (schwarz)</option>
+            <option value="default">Alle</option>
             <option value="Bezirk">Bezirk</option>
             <option value="Geschlecht">Geschlecht</option>
             <option value="Zugehörigkeit">Zugehörigkeit</option>
@@ -270,6 +264,41 @@
           : rows.filter(d => d.Bezirk === state.district);
 
         const groups = groupAndSort(filtered, state.arrangement);
+
+        if (state.arrangement === "default") {
+          const members = filtered.slice().sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name));
+          const cols = 10;
+          const rowsCount = 5;
+          const startX = 70;
+          const startY = 30;
+          const colGap = 30;
+          const rowGap = 28;
+          const width = 900;
+          const height = 200;
+
+          members.forEach((member, index) => {
+            const row = Math.floor(index / cols);
+            const col = index % cols;
+            const x = startX + col * colGap;
+            const y = startY + row * rowGap;
+
+            svg.append("circle")
+              .attr("cx", x)
+              .attr("cy", y)
+              .attr("r", 9)
+              .attr("fill", "#111")
+              .attr("stroke", "#fff")
+              .attr("stroke-width", 1.3)
+              .on("mouseover", event => hoverTooltip(event, member))
+              .on("mousemove", event => hoverTooltip(event, member))
+              .on("mouseout", () => tooltip.style("display", "none"));
+          });
+
+          svg.attr("viewBox", `0 0 ${width} ${height}`)
+             .attr("preserveAspectRatio", "xMinYMin meet");
+          return;
+        }
+
         const maxMembers = Math.max(...groups.map(g => g.members.length), 1);
         const colsPerGroup = Math.min(8, Math.max(4, Math.ceil(Math.sqrt(maxMembers))));
         const groupWidth = 220;
