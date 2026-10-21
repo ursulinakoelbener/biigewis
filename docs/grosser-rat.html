@@ -255,6 +255,8 @@
       colorMode: "Bezirk"
     };
 
+    const legendWidth = 980;
+
     d3.dsv(";", "data/grosser-rat.csv").then(data => {
       const rows = data
         .map(d => {
@@ -475,7 +477,7 @@
         }));
 
         const columns = 5;
-        const groupWidth = 180;
+        const groupWidth = 150;
         const startX = 20;
         const startY = 20;
         const rowGap = 26;
@@ -485,6 +487,7 @@
         const labelBaseY = startY + maxRows * rowGap + 28;
 
         const width = Math.max(1000, startX + columns * groupWidth + 60);
+        const boundedWidth = Math.min(width, legendWidth);
         const height = labelBaseY + 40;
 
         groups.forEach((group, groupIndex) => {
@@ -513,7 +516,7 @@
           drawGroupLabel(svg, groupX + 50, labelBaseY, group.key);
         });
 
-        svg.attr("viewBox", `0 0 ${width} ${height}`)
+        svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
            .attr("preserveAspectRatio", "xMinYMin meet");
       }
 
@@ -531,6 +534,7 @@
         const colGap = 28;
         const labelBaseY = startY + maxRows * rowGap + 30;
         const width = Math.max(900, startX + groups.length * groupWidth + 80);
+        const boundedWidth = Math.min(width, legendWidth);
         const height = labelBaseY + 40;
 
         groups.forEach((group, groupIndex) => {
@@ -558,7 +562,7 @@
           drawGroupLabel(svg, groupX + groupWidth / 2, labelBaseY, labelFor(group.key, state.arrangement));
         });
 
-        svg.attr("viewBox", `0 0 ${width} ${height}`)
+        svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
            .attr("preserveAspectRatio", "xMinYMin meet");
       }
 
@@ -567,7 +571,6 @@
         svg.selectAll("*").remove();
 
         const groups = groupAndSort(rows, "Amtsjahre");
-        const maxMembers = Math.max(...groups.map(g => g.members.length), 1);
         const membersPerRow = 2;
         const rowGap = 24;
         const colGap = 18;
@@ -578,11 +581,11 @@
         const maxRowsInGroup = Math.max(1, Math.ceil(Math.max(...groups.map(g => g.members.length), 1) / membersPerRow));
         const labelBaseY = startY + maxRowsInGroup * rowGap + 8;
         const width = Math.max(900, startX + groups.length * (groupWidth + groupGap) + 18);
+        const boundedWidth = Math.min(width, legendWidth);
         const height = labelBaseY + 30;
 
         groups.forEach((group, groupIndex) => {
           const groupX = startX + groupIndex * (groupWidth + groupGap);
-          const groupRows = Math.max(1, Math.ceil(group.members.length / membersPerRow));
 
           group.members.forEach((member, memberIndex) => {
             const col = memberIndex % membersPerRow;
@@ -606,7 +609,7 @@
           drawGroupLabel(svg, groupX + 35, labelBaseY, `${group.key} Jahre`);
         });
 
-        svg.attr("viewBox", `0 0 ${width} ${height}`)
+        svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
            .attr("preserveAspectRatio", "xMinYMin meet");
       }
 
@@ -642,6 +645,7 @@
         const colGap = 28;
         const labelBaseY = startY + maxRows * rowGap + 35;
         const width = Math.max(900, startX + groups.length * groupWidth + 80);
+        const boundedWidth = Math.min(width, legendWidth);
         const height = labelBaseY + 40;
 
         groups.forEach((group, groupIndex) => {
@@ -669,7 +673,7 @@
           drawGroupLabel(svg, groupX + groupWidth / 2, labelBaseY, labelFor(group.key, state.arrangement));
         });
 
-        svg.attr("viewBox", `0 0 ${width} ${height}`)
+        svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
            .attr("preserveAspectRatio", "xMinYMin meet");
       }
 
