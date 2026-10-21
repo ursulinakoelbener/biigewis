@@ -7,29 +7,128 @@
   <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
   <link rel="stylesheet" href="custom.css" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .title-block {
+      margin-bottom: 0.75rem;
+    }
+
+    .intro-text {
+      margin: 0 0 1rem 0;
+      max-width: 1000px;
+      font-size: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(180px, 0.7fr);
+      gap: 1rem;
+      align-items: start;
+      justify-content: center;
+    }
+
+    .chart-col {
+      min-width: 0;
+      position: sticky;
+      top: 0;
+      align-self: start;
+    }
+
+    .chart-note {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: #333;
+    }
+
+    .chart-note p {
+      margin: 0 0 0.5rem 0;
+    }
+
+    .chart-note p:last-child {
+      margin-bottom: 0;
+    }
+
+    .text-col {
+      margin-top: 10px;
+      background: #f8f8f8;
+      border-left: 3px solid #d8d8d8;
+      padding: 1rem 1.1rem;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      max-width: 100%;
+      justify-self: stretch;
+    }
+
+    .text-col p {
+      margin-top: 0;
+      margin-bottom: 0.7rem;
+    }
+
+    .text-col p:last-child {
+      margin-bottom: 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      height: auto;
+      background: transparent;
+    }
+
+    @media (max-width: 900px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .text-col {
+        margin-top: 0;
+        border-left: none;
+        border-top: 3px solid #d8d8d8;
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
   <div id="header-placeholder"></div>
 
   <main>
-    <h2 id="gender-ratio-stk">Zusammensetzung nach Geschlecht</h2>
+    <div class="title-block">
+      <h2 id="gender-ratio-stk">Geschlechterverteilung</h2>
+      <p class="intro-text">Die Zusammensetzung der Standeskommission, der Exekutive des Kantons Appenzell Innerrhoden, seit 1984 visualisiert. Im Jahr 2025 sind erstmals zwei Frauen in der Standeskommission vertreten.</p>
+    </div>
 
-    <p>Nachfolgend ist die Zusammensetzung der Standeskommission, der Exekutive des Kantons Appenzell Innerrhoden, seit 1984 visualisiert.
-      Im Jahr 2025 sind erstmals zwei Frauen in der Standeskommission vertreten.</p>
+    <div class="content-grid">
+      <div class="chart-col">
+        <svg></svg>
 
-    <p> <i>Zur Visualisierung:</i> Männer sind in Türkis, Frauen in Gelb dargestellt. Durch Bewegen der Maus über die Kreise
-      lassen sich Name, Funktion und zuständiges Departement der jeweiligen Mitglieder anzeigen.</p>
+        <div class="chart-note">
+          <p><i>Zu den Daten:</i> Die Daten stammen aus den Staatskalendern der kantonalen Verwaltung, die vom Landesarchiv Appenzell I.Rh. <a href="https://archives-quickaccess.ch/search/laai/staatskalender">digitalisiert</a> wurden. Der dabei entstandene Datensatz kann <a href="data/standeskommission.csv" download>als CSV heruntergeladen</a> werden.</p>
 
-    <p> <i>Zu den Daten:</i> Die Daten stammen aus den Staatskalendern der kantonalen Verwaltung, die vom Landesarchiv Appenzell I.Rh. <a href="https://archives-quickaccess.ch/search/laai/staatskalender">
-        digitalisiert </a> wurden. Der dabei entstandene Datensatz kann <a href="data/standeskommission.csv" download>als CSV heruntergeladen</a> werden.</p>
-  <svg></svg>
+          <p><i>Quellen:</i>
+            Suter, Carl, Die Standeskommission des Kantons Appenzell I.Rh., in: Innerrhoder Geschichtsfreund 31 (1988), 
+            Staatskalender 1979-2012, Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577.
+          </p>
+        </div>
+      </div>
 
-      <p>Quellen:
-Suter, Carl, Die Standeskommission des Kantons Appenzell I.Rh., in: Innerrhoder Geschichtsfreund 31 (1988)
-Staatskalender 1979-2012
-Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
-.</p>
-
+      <aside class="text-col">
+        <p><i>Zur Visualisierung:</i> Männer sind in Türkis, Frauen in Gelb dargestellt. Durch Bewegen der Maus über die Kreise
+          lassen sich Name, Funktion und zuständiges Departement der jeweiligen Mitglieder anzeigen.</p>
+      </aside>
+    </div>
   </main>
 
   <div id="footer-placeholder"></div>
@@ -65,16 +164,18 @@ Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
   const yearDelay = 800;
 
   d3.dsv(";", "data/standeskommission.csv").then(data => {
+    const filteredData = data.filter(d => +d.Jahr >= 1984);
+
     const svg = d3.select("svg")
       .attr("width", "100%")
       .attr("viewBox", "0 0 900 600")
       .attr("preserveAspectRatio", "xMinYMin meet");
 
-    const grouped = Array.from(d3.group(data, d => d.Jahr))
+    const grouped = Array.from(d3.group(filteredData, d => d.Jahr))
       .sort((a, b) => d3.descending(+a[0], +b[0]));
 
     const animationOrder = grouped
-      .filter(([jahr]) => +jahr >= 2020)
+      .filter(([jahr]) => +jahr >= 2025)
       .sort((a, b) => d3.ascending(+a[0], +b[0]));
 
     const totalHeight = offsetY + (grouped.length * rowSpacing) + offsetBottom;
@@ -87,7 +188,7 @@ Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
       const drawCircle = (d, i) => {
         const circle = svg.append("circle")
           .attr("cx", offsetX + i * spacing)
-          .attr("cy", d.Jahr >= 2022 ? offsetY - 100 : yPosition)
+          .attr("cy", d.Jahr >= 2025 ? offsetY - 100 : yPosition)
           .attr("r", circleRadius)
           .attr("fill", d.Geschlecht === "f" ? "#fde725" : "#21918c")
           .attr("stroke", d.Funktion.includes("Regierender Landammann") ? "#440154" : "none")
@@ -108,7 +209,7 @@ Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
             tooltip.style("display", "none");
           });
 
-        if (d.Jahr >= 2022) {
+        if (d.Jahr >= 2025) {
           circle.transition()
             .delay(i * circleDelay)
             .duration(600)
@@ -117,7 +218,7 @@ Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
         }
       };
 
-      if (jahr >= 2022) {
+      if (jahr >= 2025) {
         const animationRowIndex = animationOrder.findIndex(([y]) => y === jahr);
 
         setTimeout(() => {
@@ -145,6 +246,5 @@ Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
     });
   });
   </script>
-
 </body>
 </html>
