@@ -134,9 +134,13 @@
         </label>
 
         <label>
-          Bezirk
-          <select id="district-select" style="margin-left:0.5rem;">
-            <option value="all">Alle</option>
+          Merkmal
+          <select id="color-select" style="margin-left:0.5rem;">
+            <option value="default">default</option>
+            <option value="Bezirk">Bezirk</option>
+            <option value="Geschlecht">Geschlecht</option>
+            <option value="Zugehörigkeit">Zugehörigkeit</option>
+            <option value="Amtsjahre">Amtsjahre</option>
           </select>
         </label>
       </div>
@@ -169,7 +173,8 @@
 
     const state = {
       arrangement: "default",
-      district: "all"
+      district: "all",
+      colorMode: "default"
     };
 
     d3.dsv(";", "data/grosser-rat.csv").then(data => {
@@ -186,13 +191,8 @@
         .filter(d => !Number.isNaN(d.Jahr) && d.Jahr > 0 && d.Name !== "");
 
       const districtOrder = [...new Set(rows.map(d => d.Bezirk))].sort();
-      const districtSelect = document.getElementById("district-select");
-      districtSelect.innerHTML = [
-        '<option value="all">Alle</option>',
-        ...districtOrder.map(d => `<option value="${d}">${d}</option>`)
-      ].join("");
-
       const arrangementSelect = document.getElementById("arrangement-select");
+      const colorSelect = document.getElementById("color-select");
 
       function labelFor(value, mode) {
         if (mode === "Geschlecht") return value === "f" ? "Frau" : "Mann";
@@ -204,7 +204,7 @@
         if (mode === "default") return "#111";
 
         if (mode === "Geschlecht") {
-          return member.Geschlecht === "f" ? d3.interpolateViridis(0.8) : d3.interpolateViridis(0.3);
+          return member.Geschlecht === "f" ? "#f1d34c" : "#2f9ea4";
         }
 
         const scale = d3.scaleSequential(d3.interpolateViridis)
@@ -255,7 +255,198 @@
           .style("top", `${event.pageY - 12}px`);
       }
 
+      function renderDefault() {
+        const svg = d3.select("#distribution-svg");
+        svg.selectAll("*").remove();
+
+        const members = rows.slice().sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name));
+        const cols = 10;
+        const startX = 70;
+        const startY = 30;
+        const colGap = 30;
+        const rowGap = 28;
+        const width = 900;
+        const height = 200;
+
+        members.forEach((member, index) => {
+          const row = Math.floor(index / cols);
+          const col = index % cols;
+          const x = startX + col * colGap;
+          const y = startY + row * rowGap;
+
+          svg.append("circle")
+            .attr("cx", x)
+            .attr("cy", y)
+            .attr("r", 9)
+            .attr("fill", colorFor(member, state.colorMode, []))
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 1.3)
+            .style("transition", "all 0.4s ease")
+            .on("mouseover", event => hoverTooltip(event, member))
+            .on("mousemove", event => hoverTooltip(event, member))
+            .on("mouseout", () => tooltip.style("display", "none"));
+        });
+
+        svg.attr("viewBox", `0 0 ${width} ${height}`)
+           .attr("preserveAspectRatio", "xMinYMin meet");
+      }
+
+      function wrapLabel(text, maxChars = 22) {
+        if (!text) return "";
+        const words = String(text).split(/\s+/);
+        const lines = [];
+        let current = "";
+
+        words.forEach(word => {
+          const candidate = current ? `${current} ${word}` : word;
+          if (candidate.length <= maxChars) {
+            current = candidate;
+          } else {
+            if (current) lines.push(current);
+            current = word;
+          }
+        });
+
+        if (current) lines.push(current);
+        return lines.slice(0, 3).join("\n");
+      }
+
+      function drawGroupLabel(svg, cx, y, labelText, width = 220) {
+        const lines = wrapLabel(labelText, 22).split("\n");
+        svg.append("text")
+          .attr("x", cx)
+          .attr("y", y)
+          .attr("text-anchor", "middle")
+          .attr("font-size", 11)
+          .attr("fill", "#333")
+          .selectAll("tspan")
+          .data(lines)
+          .join("tspan")
+          .attr("x", cx)
+          .attr("dy", (d, i) => i === 0 ? 0 : 12)
+          .text(d => d);
+      }
+
+      function renderDistrictLayout() {
+        const svg = d3.select("#distribution-svg");
+        svg.selectAll("*").remove();
+
+        const selectedDistricts = state.district === "all"
+          ? districtOrder
+          : districtOrder.filter(name => name === state.district);
+
+        const groups = selectedDistricts.map(name => ({
+          key: name,
+          members: rows
+            .filter(d => d.Bezirk === name)
+            .sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name))
+        }));
+
+        const columns = 5;
+        const groupWidth = 180;
+        const startX = 70;
+        const startY = 20;
+        const rowGap = 26;
+        const colGap = 28;
+        const maxRows = Math.max(...groups.map(group => Math.max(1, Math.ceil(group.members.length / 6))));
+        const labelBaseY = startY + maxRows * rowGap + 28;
+
+        const width = Math.max(1000, startX + columns * groupWidth + 60);
+        const height = labelBaseY + 40;
+
+        groups.forEach((group, groupIndex) => {
+          const groupX = startX + (groupIndex % columns) * groupWidth;
+          const groupY = startY + Math.floor(groupIndex / columns) * 120;
+          const membersPerRow = 6;
+
+          group.members.forEach((member, memberIndex) => {
+            const col = memberIndex % membersPerRow;
+            const row = Math.floor(memberIndex / membersPerRow);
+            const x = groupX + 20 + col * colGap;
+            const y = groupY + row * rowGap;
+
+            svg.append("circle")
+              .attr("cx", x)
+              .attr("cy", y)
+              .attr("r", 9)
+              .attr("fill", colorFor(member, state.colorMode, [group.key]))
+              .attr("stroke", "#fff")
+              .attr("stroke-width", 1.3)
+              .style("transition", "all 0.4s ease")
+              .on("mouseover", event => hoverTooltip(event, member))
+              .on("mousemove", event => hoverTooltip(event, member))
+              .on("mouseout", () => tooltip.style("display", "none"));
+          });
+
+          drawGroupLabel(svg, groupX + 50, labelBaseY, group.key, groupWidth);
+        });
+
+        svg.attr("viewBox", `0 0 ${width} ${height}`)
+           .attr("preserveAspectRatio", "xMinYMin meet");
+      }
+
+      function renderCategoryLayout() {
+        const svg = d3.select("#distribution-svg");
+        svg.selectAll("*").remove();
+
+        const filtered = state.district === "all" ? rows : rows.filter(d => d.Bezirk === state.district);
+        const groups = groupAndSort(filtered, state.arrangement);
+        const maxMembers = Math.max(...groups.map(g => g.members.length), 1);
+        const maxRows = Math.max(1, Math.ceil(maxMembers / 6));
+        const groupWidth = 230;
+        const startX = 90;
+        const startY = 30;
+        const rowGap = 26;
+        const colGap = 28;
+        const labelBaseY = startY + maxRows * rowGap + 30;
+        const width = Math.max(900, startX + groups.length * groupWidth + 80);
+        const height = labelBaseY + 40;
+
+        groups.forEach((group, groupIndex) => {
+          const groupX = startX + groupIndex * groupWidth;
+
+          group.members.forEach((member, memberIndex) => {
+            const col = memberIndex % 6;
+            const row = Math.floor(memberIndex / 6);
+            const x = groupX + 20 + col * colGap;
+            const y = startY + row * rowGap;
+
+            svg.append("circle")
+              .attr("cx", x)
+              .attr("cy", y)
+              .attr("r", 9)
+              .attr("fill", colorFor(member, state.colorMode, groups.map(g => g.key)))
+              .attr("stroke", "#fff")
+              .attr("stroke-width", 1.3)
+              .style("transition", "all 0.4s ease")
+              .on("mouseover", event => hoverTooltip(event, member))
+              .on("mousemove", event => hoverTooltip(event, member))
+              .on("mouseout", () => tooltip.style("display", "none"));
+          });
+
+          drawGroupLabel(svg, groupX + groupWidth / 2, labelBaseY, labelFor(group.key, state.arrangement), groupWidth);
+        });
+
+        svg.attr("viewBox", `0 0 ${width} ${height}`)
+           .attr("preserveAspectRatio", "xMinYMin meet");
+      }
+
       function renderDistribution() {
+        if (state.arrangement === "default") {
+          renderDefault();
+          return;
+        }
+
+        if (state.arrangement === "Bezirk") {
+          renderDistrictLayout();
+          return;
+        }
+
+        if (state.arrangement === "Zugehörigkeit") {
+          renderCategoryLayout();
+          return;
+        }
+
         const svg = d3.select("#distribution-svg");
         svg.selectAll("*").remove();
 
@@ -264,50 +455,17 @@
           : rows.filter(d => d.Bezirk === state.district);
 
         const groups = groupAndSort(filtered, state.arrangement);
-
-        if (state.arrangement === "default") {
-          const members = filtered.slice().sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name));
-          const cols = 10;
-          const rowsCount = 5;
-          const startX = 70;
-          const startY = 30;
-          const colGap = 30;
-          const rowGap = 28;
-          const width = 900;
-          const height = 200;
-
-          members.forEach((member, index) => {
-            const row = Math.floor(index / cols);
-            const col = index % cols;
-            const x = startX + col * colGap;
-            const y = startY + row * rowGap;
-
-            svg.append("circle")
-              .attr("cx", x)
-              .attr("cy", y)
-              .attr("r", 9)
-              .attr("fill", "#111")
-              .attr("stroke", "#fff")
-              .attr("stroke-width", 1.3)
-              .on("mouseover", event => hoverTooltip(event, member))
-              .on("mousemove", event => hoverTooltip(event, member))
-              .on("mouseout", () => tooltip.style("display", "none"));
-          });
-
-          svg.attr("viewBox", `0 0 ${width} ${height}`)
-             .attr("preserveAspectRatio", "xMinYMin meet");
-          return;
-        }
-
         const maxMembers = Math.max(...groups.map(g => g.members.length), 1);
+        const maxRows = Math.max(1, Math.ceil(maxMembers / 6));
         const colsPerGroup = Math.min(8, Math.max(4, Math.ceil(Math.sqrt(maxMembers))));
         const groupWidth = 220;
         const startX = 90;
         const startY = 30;
         const rowGap = 26;
         const colGap = 28;
+        const labelBaseY = startY + maxRows * rowGap + 35;
         const width = Math.max(900, startX + groups.length * groupWidth + 80);
-        const height = 180 + Math.ceil(maxMembers / colsPerGroup) * rowGap + 40;
+        const height = labelBaseY + 40;
 
         groups.forEach((group, groupIndex) => {
           const groupX = startX + groupIndex * groupWidth;
@@ -322,21 +480,16 @@
               .attr("cx", x)
               .attr("cy", y)
               .attr("r", 9)
-              .attr("fill", colorFor(member, state.arrangement, groups.map(g => g.key)))
+              .attr("fill", colorFor(member, state.colorMode, groups.map(g => g.key)))
               .attr("stroke", "#fff")
               .attr("stroke-width", 1.3)
+              .style("transition", "all 0.4s ease")
               .on("mouseover", event => hoverTooltip(event, member))
               .on("mousemove", event => hoverTooltip(event, member))
               .on("mouseout", () => tooltip.style("display", "none"));
           });
 
-          svg.append("text")
-            .attr("x", groupX + groupWidth / 2)
-            .attr("y", startY + (Math.ceil(group.members.length / colsPerGroup) * rowGap) + 35)
-            .attr("text-anchor", "middle")
-            .attr("font-size", 12)
-            .attr("fill", "#333")
-            .text(labelFor(group.key, state.arrangement));
+          drawGroupLabel(svg, groupX + groupWidth / 2, labelBaseY, labelFor(group.key, state.arrangement), groupWidth);
         });
 
         svg.attr("viewBox", `0 0 ${width} ${height}`)
@@ -350,6 +503,11 @@
 
       arrangementSelect.addEventListener("change", (event) => {
         state.arrangement = event.target.value;
+        renderDistribution();
+      });
+
+      colorSelect.addEventListener("change", (event) => {
+        state.colorMode = event.target.value;
         renderDistribution();
       });
 
