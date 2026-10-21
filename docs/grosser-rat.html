@@ -116,29 +116,39 @@
   <main>
     <div class="title-block">
       <h2>Grosser Rat</h2>
-      <p class="intro-text">Die Zusammensetzung des Grossrats visualisiert. Jede Kugel steht für ein Grossratsmitglied; Männer sind türkis, Frauen gelb eingefärbt.</p>
+      <p class="intro-text">Die Zusammensetzung des Grossrats visualisiert. In der ersten Ansicht sind alle Mitglieder in einem Block aufgereiht. In der Sitzverteilungsansicht können Sie nach Bezirk und Farbmerkmal filtern.</p>
     </div>
 
-    <div class="content-grid">
-      <div class="chart-col">
-        <svg id="grossrat-svg"></svg>
+    <section class="overview-section">
+      <h3>Alle Grossratsmitglieder</h3>
+      <svg id="overview-svg"></svg>
+    </section>
 
-        <div class="chart-note">
-          <p><i>Zu den Daten:</i> Der Datensatz stammt aus den verfügbaren Wahl- und Amtsdaten für den Grossrat Appenzell Innerrhoden und liegt als CSV vor. Der Datensatz kann <a href="data/grosser-rat.csv" download>als CSV heruntergeladen</a> werden.</p>
-        </div>
+    <section class="distribution-section">
+      <h3>Sitzverteilung</h3>
+
+      <div class="controls" style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+        <label>
+          Anordnung
+          <select id="arrangement-select" style="margin-left:0.5rem;">
+            <option value="default">Alle (schwarz)</option>
+            <option value="Bezirk">Bezirk</option>
+            <option value="Geschlecht">Geschlecht</option>
+            <option value="Zugehörigkeit">Zugehörigkeit</option>
+            <option value="Amtsjahre">Amtsjahre</option>
+          </select>
+        </label>
+
+        <label>
+          Bezirk
+          <select id="district-select" style="margin-left:0.5rem;">
+            <option value="all">Alle</option>
+          </select>
+        </label>
       </div>
 
-      <aside class="text-col">
-        <p><i>Zur Visualisierung:</i> Die Kreise zeigen einzelne Grossratsmitglieder pro Wahljahr. Beim Bewegen der Maus über einen Kreis erscheinen Name, Funktion, Bezirk und Zugehörigkeit.</p>
-
-        <ul class="stat-list">
-          <li><strong>Jahre:</strong> 2007–2025</li>
-          <li><strong>Mitglieder:</strong> <span id="member-count">0</span></li>
-          <li><strong>Frauen:</strong> <span id="female-count">0</span></li>
-          <li><strong>Männer:</strong> <span id="male-count">0</span></li>
-        </ul>
-      </aside>
-    </div>
+      <svg id="distribution-svg"></svg>
+    </section>
   </main>
 
   <div id="footer-placeholder"></div>
@@ -163,6 +173,11 @@
       .style("pointer-events", "none")
       .style("display", "none");
 
+    const state = {
+      arrangement: "default",
+      district: "all"
+    };
+
     d3.dsv(";", "data/grosser-rat.csv").then(data => {
       const rows = data
         .map(d => ({
@@ -174,72 +189,142 @@
           Zugehörigkeit: (d.Zugehörigkeit || "").trim(),
           Amtsdauer: Number(d.Amtsdauer || 0)
         }))
-        .filter(d => !Number.isNaN(d.Jahr));
+        .filter(d => !Number.isNaN(d.Jahr) && d.Jahr > 0 && d.Name !== "");
 
-      const grouped = Array.from(d3.group(rows, d => d.Jahr))
-        .sort((a, b) => d3.ascending(a[0], b[0]));
+      const districtOrder = [...new Set(rows.map(d => d.Bezirk))].sort();
+      const districtSelect = document.getElementById("district-select");
+      districtSelect.innerHTML = [
+        '<option value="all">Alle</option>',
+        ...districtOrder.map(d => `<option value="${d}">${d}</option>`)
+      ].join("");
 
-      const widest = d3.max(grouped, ([, members]) => members.length) || 1;
-      const width = 1100;
-      const height = 120 + grouped.length * 70;
-      const left = 150;
-      const top = 45;
-      const xStep = Math.min(36, (width - left - 80) / Math.max(widest, 1));
+      const arrangementSelect = document.getElementById("arrangement-select");
 
-      const svg = d3.select("#grossrat-svg")
-        .attr("viewBox", `0 0 ${width} ${height}`)
-        .attr("preserveAspectRatio", "xMinYMin meet");
+      function labelFor(value, mode) {
+        if (mode === "Geschlecht") return value === "f" ? "Frau" : "Mann";
+        if (mode === "Amtsjahre") return `${value} Jahre`;
+        return String(value);
+      }
 
-      svg.append("g")
-        .selectAll("line")
-        .data(grouped)
-        .join("line")
-        .attr("x1", left - 20)
-        .attr("x2", width - 30)
-        .attr("y1", (_, i) => top + i * 70 + 20)
-        .attr("y2", (_, i) => top + i * 70 + 20)
-        .attr("stroke", "#e5e5e5")
-        .attr("stroke-width", 1);
+      function colorFor(member, mode, valueList) {
+        if (mode === "default") return "#111";
 
-      grouped.forEach(([jahr, members], rowIndex) => {
-        const y = top + rowIndex * 70 + 20;
+        if (mode === "Geschlecht") {
+          return member.Geschlecht === "f" ? d3.interpolateViridis(0.8) : d3.interpolateViridis(0.3);
+        }
 
-        svg.append("text")
-          .attr("x", 30)
-          .attr("y", y + 5)
-          .attr("font-size", 14)
-          .attr("fill", "#333")
-          .text(jahr);
+        const scale = d3.scaleSequential(d3.interpolateViridis)
+          .domain([0, Math.max(1, valueList.length - 1)]);
 
-        members.forEach((member, i) => {
-          const x = left + i * xStep;
+        const index = valueList.indexOf(valueForGrouping(member, mode));
+        return scale(index >= 0 ? index : 0);
+      }
 
-          svg.append("circle")
-            .attr("cx", x)
-            .attr("cy", y)
-            .attr("r", 9)
-            .attr("fill", member.Geschlecht === "f" ? "#f1d34c" : "#2f9ea4")
-            .attr("stroke", "#fff")
-            .attr("stroke-width", 1.5)
-            .on("mouseover", (event) => {
-              tooltip
-                .style("display", "block")
-                .html(`<strong>${member.Name}</strong><br/>${member.Funktion}<br/>${member.Bezirk}<br/>${member.Zugehörigkeit}`);
-            })
-            .on("mousemove", (event) => {
-              tooltip
-                .style("left", `${event.pageX + 12}px`)
-                .style("top", `${event.pageY - 12}px`);
-            })
-            .on("mouseout", () => {
-              tooltip.style("display", "none");
-            });
+      function valueForGrouping(member, mode) {
+        if (mode === "Bezirk") return member.Bezirk;
+        if (mode === "Geschlecht") return member.Geschlecht;
+        if (mode === "Zugehörigkeit") return member.Zugehörigkeit;
+        if (mode === "Amtsjahre") return member.Amtsdauer;
+        return "default";
+      }
+
+      function groupAndSort(list, mode) {
+        if (mode === "default") {
+          return [{ key: "Alle", members: list.slice().sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name)) }];
+        }
+
+        const groups = d3.group(list, d => valueForGrouping(d, mode));
+        const entries = [...groups.entries()].sort((a, b) => {
+          const av = a[0];
+          const bv = b[0];
+          if (typeof av === "number" && typeof bv === "number") return av - bv;
+          return String(av).localeCompare(String(bv));
         });
+
+        return entries.map(([key, members]) => ({
+          key,
+          members: members.slice().sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name))
+        }));
+      }
+
+      function hoverTooltip(event, member) {
+        tooltip
+          .style("display", "block")
+          .html(`
+            <strong>${member.Name}</strong><br>
+            ${member.Funktion}<br>
+            Wahljahr: ${member.Jahr}<br>
+            Zugehörigkeit: ${member.Zugehörigkeit}
+          `);
+        tooltip
+          .style("left", `${event.pageX + 12}px`)
+          .style("top", `${event.pageY - 12}px`);
+      }
+
+      function renderDistribution() {
+        const svg = d3.select("#distribution-svg");
+        svg.selectAll("*").remove();
+
+        const filtered = state.district === "all"
+          ? rows
+          : rows.filter(d => d.Bezirk === state.district);
+
+        const groups = groupAndSort(filtered, state.arrangement);
+        const maxMembers = Math.max(...groups.map(g => g.members.length), 1);
+        const colsPerGroup = Math.min(8, Math.max(4, Math.ceil(Math.sqrt(maxMembers))));
+        const groupWidth = 220;
+        const startX = 90;
+        const startY = 80;
+        const rowGap = 26;
+        const colGap = 28;
+        const width = Math.max(900, startX + groups.length * groupWidth + 80);
+        const height = 220 + Math.ceil(maxMembers / colsPerGroup) * rowGap + 40;
+
+        groups.forEach((group, groupIndex) => {
+          const groupX = startX + groupIndex * groupWidth;
+
+          svg.append("text")
+            .attr("x", groupX + groupWidth / 2)
+            .attr("y", 24)
+            .attr("text-anchor", "middle")
+            .attr("font-size", 12)
+            .attr("fill", "#333")
+            .text(labelFor(group.key, state.arrangement));
+
+          group.members.forEach((member, memberIndex) => {
+            const col = memberIndex % colsPerGroup;
+            const row = Math.floor(memberIndex / colsPerGroup);
+            const x = groupX + 20 + col * colGap;
+            const y = startY + row * rowGap;
+
+            svg.append("circle")
+              .attr("cx", x)
+              .attr("cy", y)
+              .attr("r", 9)
+              .attr("fill", colorFor(member, state.arrangement, groups.map(g => g.key)))
+              .attr("stroke", "#fff")
+              .attr("stroke-width", 1.3)
+              .on("mouseover", event => hoverTooltip(event, member))
+              .on("mousemove", event => hoverTooltip(event, member))
+              .on("mouseout", () => tooltip.style("display", "none"));
+          });
+        });
+
+        svg.attr("viewBox", `0 0 ${width} ${height}`)
+           .attr("preserveAspectRatio", "xMinYMin meet");
+      }
+
+      districtSelect.addEventListener("change", (event) => {
+        state.district = event.target.value;
+        renderDistribution();
       });
 
-      document.getElementById("member-count").textContent = rows.length;
-      document.getElementById("female-count").textContent = rows.filter(d => d.Geschlecht === "f").length;
-      document.getElementById("male-count").textContent = rows.filter(d => d.Geschlecht === "m").length;
+      arrangementSelect.addEventListener("change", (event) => {
+        state.arrangement = event.target.value;
+        renderDistribution();
+      });
+
+      renderDistribution();
     });
   </script>
 </body>
