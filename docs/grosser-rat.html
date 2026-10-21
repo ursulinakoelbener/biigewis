@@ -108,6 +108,84 @@
         max-width: 100%;
       }
     }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      align-items: end;
+    }
+
+    .controls label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #222;
+    }
+
+    .controls select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      font: inherit;
+      font-size: 1.08rem;
+      line-height: 1.2;
+      padding: 0.8rem 2.5rem 0.8rem 0.9rem;
+      border: 1px solid #d0d7de;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffffff 0%, #f6f8fa 100%);
+      color: #1f2328;
+      min-width: 170px;
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      background-image: linear-gradient(45deg, transparent 50%, #4b5563 50%), linear-gradient(135deg, #4b5563 50%, transparent 50%);
+      background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+
+    .controls select:hover {
+      border-color: #9aa7b2;
+      box-shadow: 0 2px 8px rgba(16, 24, 40, 0.08);
+    }
+
+    .controls select:focus {
+      outline: none;
+      border-color: #2f80ed;
+      box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.15);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1rem;
+      margin: 0 0 1rem 0;
+      padding: 0.8rem 0.9rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fafafa;
+      max-width: 980px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      color: #2f2f2f;
+    }
+
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      display: inline-block;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -116,15 +194,15 @@
   <main>
     <div class="title-block">
       <h2>Grosser Rat</h2>
-      <p class="intro-text">Die Zusammensetzung des Grossrats visualisiert. In der ersten Ansicht sind alle Mitglieder in einem Block aufgereiht. Sie können die Sitzverteilung nach verschiedenen Merkmalen darstellen.</p>
+      <p class="intro-text">Die Zusammensetzung des Grossrats visualisiert. In der ersten Ansicht sind alle Mitglieder in einem Block aufgereiht. Sie können die Sitzverteilung nach verschiedenen Merkmalen darstellen und einfärben.</p>
     </div>
 
     <section class="distribution-section">
 
-      <div class="controls" style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+      <div class="controls">
         <label>
           Sitzverteilung
-          <select id="arrangement-select" style="margin-left:0.5rem;">
+          <select id="arrangement-select">
             <option value="default">Alle</option>
             <option value="Bezirk">Bezirk</option>
             <option value="Geschlecht">Geschlecht</option>
@@ -135,7 +213,7 @@
 
         <label>
           Merkmal
-          <select id="color-select" style="margin-left:0.5rem;">
+          <select id="color-select">
             <option value="Bezirk">Bezirk</option>
             <option value="Geschlecht">Geschlecht</option>
             <option value="Zugehörigkeit">Zugehörigkeit</option>
@@ -143,6 +221,8 @@
           </select>
         </label>
       </div>
+
+      <div id="legend" class="legend" aria-live="polite"></div>
 
       <svg id="distribution-svg"></svg>
     </section>
@@ -172,7 +252,7 @@
 
     const state = {
       arrangement: "default",
-      colorMode: "default"
+      colorMode: "Bezirk"
     };
 
     d3.dsv(";", "data/grosser-rat.csv").then(data => {
@@ -191,31 +271,86 @@
         })
         .filter(d => !Number.isNaN(d.Jahr) && d.Jahr > 0 && d.Name !== "" && d.Bezirk !== "");
 
-      const districtOrder = [...new Set(rows.map(d => d.Bezirk))].sort((a, b) => a.localeCompare(b, 'de', { sensitivity: 'base' }));
+      const districtOrder = ["Appenzell", "Schwende-Rüte", "Schlatt-Haslen", "Gonten", "Oberegg"];
+      const districtColorScale = d3.scaleOrdinal()
+        .domain(districtOrder)
+        .range([
+          d3.interpolateViridis(0.12),
+          d3.interpolateViridis(0.38),
+          d3.interpolateViridis(0.58),
+          d3.interpolateViridis(0.75),
+          d3.interpolateViridis(0.9)
+        ]);
+
+      const zugehoerigkeitColorScale = d3.scaleOrdinal()
+        .domain(["Arbeitnehmende", "Bäuerinnen und Bauern", "Gewerbe"])
+        .range([
+          d3.interpolateViridis(0.10),
+          d3.interpolateViridis(0.55),
+          d3.interpolateViridis(0.99)
+        ]);
 
       const arrangementSelect = document.getElementById("arrangement-select");
       const colorSelect = document.getElementById("color-select");
 
       function syncColorFromArrangement() {
-        if (state.arrangement === "default") {
-          state.colorMode = "default";
-        } else {
+        if (state.arrangement !== "default") {
           state.colorMode = state.arrangement;
+          colorSelect.value = state.colorMode;
+        } else {
+          colorSelect.value = state.colorMode;
         }
-        colorSelect.value = state.colorMode;
+      }
+
+      function normalizeZugehoerigkeit(value) {
+        const text = String(value || "").trim();
+        if (!text) return "";
+
+        const normalized = text.replace(/\s+/g, " ");
+        const lower = normalized.toLowerCase();
+
+        if (lower.includes("arbeitnehmendenvereinigung")) return "Arbeitnehmende";
+        if (lower.includes("bäuerinnen") || lower.includes("bauernverband") || lower.includes("landfrauenverband")) return "Bäuerinnen und Bauern";
+        if (lower.includes("gewerbe")) return "Gewerbe";
+
+        const replacements = {
+          "Arbeitnehmendenvereinigung Appenzell (AVA)": "Arbeitnehmende",
+          "Bäuerinnen- und Landfrauenverband Appenzell Innerrhoden (BLV AI) od. Bauernverband AI": "Bäuerinnen und Bauern",
+          "Kantonaler Gewerbeverband Appenzell Innerrhoden": "Gewerbe",
+          "Kantonaler Gewerbeverand Appenzell Innerrhoden (KGVAI)": "Gewerbe"
+        };
+
+        return replacements[normalized] || normalized;
       }
 
       function labelFor(value, mode) {
         if (mode === "Geschlecht") return value === "f" ? "Frau" : "Mann";
         if (mode === "Amtsjahre") return `${value} Jahre`;
+        if (mode === "Zugehörigkeit") return normalizeZugehoerigkeit(value);
         return String(value);
+      }
+
+      function valueForGrouping(member, mode) {
+        if (mode === "Bezirk") return member.Bezirk;
+        if (mode === "Geschlecht") return member.Geschlecht;
+        if (mode === "Zugehörigkeit") return normalizeZugehoerigkeit(member.Zugehörigkeit);
+        if (mode === "Amtsjahre") return member.Amtsdauer;
+        return "default";
       }
 
       function colorFor(member, mode, valueList) {
         if (mode === "default") return "#111";
 
+        if (mode === "Bezirk") {
+          return districtColorScale(member.Bezirk);
+        }
+
         if (mode === "Geschlecht") {
           return member.Geschlecht === "f" ? "#f1d34c" : "#2f9ea4";
+        }
+
+        if (mode === "Zugehörigkeit") {
+          return zugehoerigkeitColorScale(valueForGrouping(member, mode));
         }
 
         const scale = d3.scaleSequential(d3.interpolateViridis)
@@ -223,14 +358,6 @@
 
         const index = valueList.indexOf(valueForGrouping(member, mode));
         return scale(index >= 0 ? index : 0);
-      }
-
-      function valueForGrouping(member, mode) {
-        if (mode === "Bezirk") return member.Bezirk;
-        if (mode === "Geschlecht") return member.Geschlecht;
-        if (mode === "Zugehörigkeit") return member.Zugehörigkeit;
-        if (mode === "Amtsjahre") return member.Amtsdauer;
-        return "default";
       }
 
       function groupAndSort(list, mode) {
@@ -257,49 +384,13 @@
           .style("display", "block")
           .html(`
             <strong>${member.Name}</strong><br>
-            ${member.Funktion}<br>
+            ${member.Funktion} Bezirk ${member.Bezirk}<br>
             Wahljahr: ${member.Jahr}<br>
-            Zugehörigkeit: ${member.Zugehörigkeit}
+            Zugehörigkeit: ${normalizeZugehoerigkeit(member.Zugehörigkeit)}
           `);
         tooltip
           .style("left", `${event.pageX + 12}px`)
           .style("top", `${event.pageY - 12}px`);
-      }
-
-      function renderDefault() {
-        const svg = d3.select("#distribution-svg");
-        svg.selectAll("*").remove();
-
-        const members = rows.slice().sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name));
-        const cols = 10;
-        const startX = 70;
-        const startY = 30;
-        const colGap = 30;
-        const rowGap = 28;
-        const width = 900;
-        const height = 200;
-
-        members.forEach((member, index) => {
-          const row = Math.floor(index / cols);
-          const col = index % cols;
-          const x = startX + col * colGap;
-          const y = startY + row * rowGap;
-
-          svg.append("circle")
-            .attr("cx", x)
-            .attr("cy", y)
-            .attr("r", 9)
-            .attr("fill", colorFor(member, state.colorMode, []))
-            .attr("stroke", "#fff")
-            .attr("stroke-width", 1.3)
-            .style("transition", "all 0.4s ease")
-            .on("mouseover", event => hoverTooltip(event, member))
-            .on("mousemove", event => hoverTooltip(event, member))
-            .on("mouseout", () => tooltip.style("display", "none"));
-        });
-
-        svg.attr("viewBox", `0 0 ${width} ${height}`)
-           .attr("preserveAspectRatio", "xMinYMin meet");
       }
 
       function wrapLabel(text, maxChars = 22) {
@@ -338,24 +429,59 @@
           .text(d => d);
       }
 
+      function renderDefault() {
+        const svg = d3.select("#distribution-svg");
+        svg.selectAll("*").remove();
+
+        const members = rows.slice().sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name));
+        const cols = 10;
+        const startX = 20;
+        const startY = 20;
+        const colGap = 30;
+        const rowGap = 28;
+        const width = 900;
+        const height = 200;
+
+        members.forEach((member, index) => {
+          const row = Math.floor(index / cols);
+          const col = index % cols;
+          const x = startX + col * colGap;
+          const y = startY + row * rowGap;
+
+          svg.append("circle")
+            .attr("cx", x)
+            .attr("cy", y)
+            .attr("r", 9)
+            .attr("fill", colorFor(member, state.colorMode, []))
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 1.3)
+            .style("transition", "all 0.4s ease")
+            .on("mouseover", event => hoverTooltip(event, member))
+            .on("mousemove", event => hoverTooltip(event, member))
+            .on("mouseout", () => tooltip.style("display", "none"));
+        });
+
+        svg.attr("viewBox", `0 0 ${width} ${height}`)
+           .attr("preserveAspectRatio", "xMinYMin meet");
+      }
+
       function renderDistrictLayout() {
         const svg = d3.select("#distribution-svg");
         svg.selectAll("*").remove();
 
         const groups = districtOrder.map(name => ({
           key: name,
-          members: rows
-            .filter(d => d.Bezirk === name)
-            .sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name))
+          members: rows.filter(d => d.Bezirk === name).sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name))
         }));
 
         const columns = 5;
         const groupWidth = 180;
-        const startX = 70;
+        const startX = 20;
         const startY = 20;
         const rowGap = 26;
         const colGap = 28;
-        const maxRows = Math.max(...groups.map(group => Math.max(1, Math.ceil(group.members.length / 6))));
+        const membersPerRow = 5;
+        const maxRows = Math.max(...groups.map(group => Math.max(1, Math.ceil(group.members.length / membersPerRow))));
         const labelBaseY = startY + maxRows * rowGap + 28;
 
         const width = Math.max(1000, startX + columns * groupWidth + 60);
@@ -364,7 +490,6 @@
         groups.forEach((group, groupIndex) => {
           const groupX = startX + (groupIndex % columns) * groupWidth;
           const groupY = startY + Math.floor(groupIndex / columns) * 120;
-          const membersPerRow = 6;
 
           group.members.forEach((member, memberIndex) => {
             const col = memberIndex % membersPerRow;
@@ -400,7 +525,7 @@
         const maxMembers = Math.max(...groups.map(g => g.members.length), 1);
         const maxRows = Math.max(1, Math.ceil(maxMembers / 6));
         const groupWidth = 230;
-        const startX = 90;
+        const startX = 30;
         const startY = 30;
         const rowGap = 26;
         const colGap = 28;
@@ -438,6 +563,8 @@
       }
 
       function renderDistribution() {
+        renderLegend();
+
         if (state.arrangement === "default") {
           renderDefault();
           return;
@@ -456,7 +583,7 @@
         const maxRows = Math.max(1, Math.ceil(maxMembers / 6));
         const colsPerGroup = Math.min(8, Math.max(4, Math.ceil(Math.sqrt(maxMembers))));
         const groupWidth = 220;
-        const startX = 90;
+        const startX = 30;
         const startY = 30;
         const rowGap = 26;
         const colGap = 28;
@@ -491,6 +618,58 @@
 
         svg.attr("viewBox", `0 0 ${width} ${height}`)
            .attr("preserveAspectRatio", "xMinYMin meet");
+      }
+
+      function renderLegend() {
+        const legendEl = document.getElementById("legend");
+        legendEl.innerHTML = "";
+
+        if (state.colorMode === "default") {
+          legendEl.style.display = "none";
+          return;
+        }
+
+        legendEl.style.display = "flex";
+
+        const entries = [];
+
+        if (state.colorMode === "Bezirk") {
+          districtOrder.forEach((district) => {
+            entries.push({ label: district, color: districtColorScale(district) });
+          });
+        } else if (state.colorMode === "Geschlecht") {
+          entries.push({ label: "Frau", color: "#f1d34c" });
+          entries.push({ label: "Mann", color: "#2f9ea4" });
+        } else if (state.colorMode === "Zugehörigkeit") {
+          const colors = zugehoerigkeitColorScale.range();
+          entries.push({ label: "Arbeitnehmende", color: colors[0] });
+          entries.push({ label: "Bäuerinnen und Bauern", color: colors[1] });
+          entries.push({ label: "Gewerbe", color: colors[2] });
+        } else if (state.colorMode === "Amtsjahre") {
+          const min = 1;
+          const max = Math.max(20, ...rows.map(d => d.Amtsdauer));
+          const scale = d3.scaleSequential(d3.interpolateViridis).domain([min, max]);
+          const labels = [min, Math.round((min + max) / 2), max];
+          labels.forEach((value) => {
+            entries.push({ label: `${value} Jahre`, color: scale(value) });
+          });
+        }
+
+        entries.forEach(({ label, color }) => {
+          const item = document.createElement("div");
+          item.className = "legend-item";
+
+          const swatch = document.createElement("span");
+          swatch.className = "legend-swatch";
+          swatch.style.background = color;
+
+          const text = document.createElement("span");
+          text.textContent = label;
+
+          item.appendChild(swatch);
+          item.appendChild(text);
+          legendEl.appendChild(item);
+        });
       }
 
       arrangementSelect.addEventListener("change", (event) => {
