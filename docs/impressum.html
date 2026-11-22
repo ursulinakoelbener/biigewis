@@ -4,30 +4,92 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Impressum</title>
-  <link rel="stylesheet" href="../tufte.css" />
-  <link rel="stylesheet" href="../custom.css" />
+  <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
+  <link rel="stylesheet" href="custom.css" />
+  <style>
+    body { font-family: sans-serif; }
+
+    main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+
+    .title-block { margin-bottom: 0.75rem; }
+
+    .intro-text {
+      margin: 0 0 1rem 0;
+      max-width: 1000px;
+      font-size: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .legal { max-width: 760px; }
+    .legal h3 { font-size: 1.6rem; margin: 2rem 0 0.4rem; }
+    .legal p { width: 100%; max-width: none; margin: 0 0 0.9rem; font-size: 1.2rem; line-height: 1.6; }
+
+    .legal-note {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #d8d8d8;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: #333;
+    }
+    .legal-note p { margin: 0 0 0.4rem; }
+  </style>
 </head>
 <body>
+  <div id="header-placeholder"></div>
+
   <main>
-    <h2>Impressum</h2>
-    <p>
-      Verantwortlich für diese Website:<br>
-      Ursulina Kölbener<br>
-      Gaiserstrasse 120<br>
-      9050 Appenzell Meistersrüte<br>
-    </p>
-    <p>
-      Kontakt: <a href="mailto:hoi@koelbener.ch">hoi@koelbener.ch</a>
-    </p>
-    <p>
-      Diese Website wird als <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Page</a> gehostet.
-    </p>
-    <p>
-      Haftungsausschluss: Trotz sorgfältiger inhaltlicher Kontrolle übernehme ich keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschliesslich deren Betreibende verantwortlich.
-    </p>
-    <p>
-      © 2026 Ursulina Kölbener. Alle Rechte vorbehalten.
-    </p>
+    <div class="title-block">
+      <h2 id="impressum">Impressum</h2>
+      <p class="intro-text">Angaben zur Betreiberin dieser Website und zum Umgang mit Daten.</p>
+    </div>
+
+    <div class="legal">
+      <h3>Verantwortlich</h3>
+      <p>
+        Ursulina Kölbener<br />
+      </p>
+      <p>E-Mail: <a id="mail" href="#" data-user="hoi" data-domain="koelbener.ch">hoi [at] koelbener.ch</a></p>
+
+      <h3>Über diese Website</h3>
+      <p>biigewis ist ein privates, nicht kommerzielles Freizeitprojekt. Die Daten werden sorgfältig zusammengetragen und aufbereitet, trotzdem können sich Fehler einschleichen, etwa bei der Übertragung aus historischen Quellen. Hinweise und Korrekturen nehme ich gerne per E-Mail entgegen.</p>
+
+      <h3>Quellen und Lizenz</h3>
+      <p>Die Quellen der Daten sind auf der jeweiligen Seite angegeben. Daten und Texte stehen unter der Lizenz <a href="https://creativecommons.org/licenses/by/4.0/deed.de">CC BY 4.0</a> (Weiterverwendung mit Quellenangabe), der Code unter der <a href="https://opensource.org/license/mit">MIT-Lizenz</a>. Die Rechte an den ursprünglichen Quellen Dritter bleiben davon unberührt. Daten und Quellcode sind auf <a href="https://github.com/ursulinakoelbener/biigewis">GitHub</a> einsehbar.</p>
+
+      <h3>Hosting und Datenschutz</h3>
+      <p>Diese Website wird als <a href="https://pages.github.com/">GitHub Page</a> gehostet. Beim Aufruf verarbeitet der Hoster technisch notwendige Daten, insbesondere die IP-Adresse der Besucherinnen und Besucher. Die Server befinden sich möglicherweise ausserhalb der Schweiz, auch in den USA.</p>
+      <p>Für Gestaltung und Grafiken werden Dateien von externen Servern geladen: das Stylesheet Tufte CSS (von GitHub Pages) und die Bibliothek D3 (von d3js.org). Dabei wird ebenfalls die IP-Adresse an diese Server übermittelt.</p>
+      <p>Diese Website setzt keine Cookies ein und verwendet keine Analyse- oder Tracking-Dienste. Wer mir eine E-Mail schreibt, dessen Angaben verwende ich nur, um die Nachricht zu beantworten.</p>
+
+      <h3>Haftungsausschluss</h3>
+      <p>Trotz sorgfältiger Kontrolle übernehme ich keine Gewähr für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte. Für die Inhalte externer Links sind ausschliesslich deren Betreibende verantwortlich, dafür übernehme ich keine Haftung.</p>
+
+      <div class="legal-note">
+        <p>Stand: November 2026</p>
+        <p>© 2026 Ursulina Kölbener. Daten und Texte unter CC BY 4.0, Code unter MIT-Lizenz.</p>
+      </div>
+    </div>
   </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script>
+  async function loadHTML(id, url) {
+    const resp = await fetch(url);
+    const text = await resp.text();
+    document.getElementById(id).innerHTML = text;
+  }
+  loadHTML('header-placeholder', 'components/header.html');
+  loadHTML('footer-placeholder', 'components/footer.html');
+  </script>
+
+  <script>
+  // E-Mail-Adresse erst im Browser zusammensetzen (Schutz vor Spam-Robotern, die den Quelltext durchsuchen)
+  const mail = document.getElementById("mail");
+  const address = `${mail.dataset.user}@${mail.dataset.domain}`;
+  mail.href = `mailto:${address}`;
+  mail.textContent = address;
+  </script>
 </body>
 </html>
