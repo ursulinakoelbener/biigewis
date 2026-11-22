@@ -6,6 +6,7 @@
   <title>Standeskommission im Zeitverlauf</title>
   <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
   <link rel="stylesheet" href="custom.css" />
+  <link rel="stylesheet" href="pages.css" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     :root {
@@ -96,6 +97,8 @@
   <div id="header-placeholder"></div>
 
   <main>
+    <nav class="breadcrumb" data-pages="breadcrumb" aria-label="Brotkrumen"></nav>
+
     <div class="title-block">
       <h2 id="gender-timeline">Geschlechterverteilung im Zeitverlauf</h2>
       <p class="intro-text">Wähle ein Jahr und sieh, wie viele Frauen und Männer seit 1984 in der Standeskommission des Kantons Appenzell Innerrhoden vertreten waren.</p>
@@ -148,6 +151,8 @@
         <p>Die Gesamtübersicht aller Jahre findest du auf der Seite <a href="standeskommission.html">Standeskommission</a>.</p>
       </aside>
     </div>
+
+    <nav class="related" data-pages="related" aria-label="Weitere Visualisierungen"></nav>
   </main>
 
   <div id="footer-placeholder"></div>
@@ -259,5 +264,6 @@
     box.hidden = false;
   });
   </script>
+  <script src="pages.js" defer></script>
 </body>
 </html>
