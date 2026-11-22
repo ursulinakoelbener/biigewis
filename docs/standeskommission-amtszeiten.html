@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amtszeiten der Standeskommission</title>
+  <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
+  <link rel="stylesheet" href="custom.css" />
+  <link rel="stylesheet" href="pages.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --role-landammann: #440154;
+      --role-statthalter: #414487;
+      --role-saeckelmeister: #2a788e;
+      --role-landeshauptmann: #22a884;
+      --role-bauherr: #7ad151;
+      --role-landesfaehnrich: #fde725;
+      --role-armleutesaeckelmeister: #31688e;
+      --role-zeugherr: #35b779;
+      --slider-accent: #767676;
+    }
+
+    body { font-family: sans-serif; }
+    main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+    .title-block { margin-bottom: 0.75rem; }
+    .intro-text {
+      max-width: 1000px;
+      margin: 0 0 1rem;
+      font-size: 1.5rem;
+      line-height: 1.6;
+    }
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+      justify-content: center;
+    }
+    .chart-col { min-width: 0; }
+    .period-controls {
+      margin: 0 0 1rem;
+      padding: 0.8rem 1rem;
+      border: 1px solid #ddd;
+      background: #f8f8f8;
+      font-size: 0.9rem;
+    }
+    .period-controls p { margin: 0; font-weight: 600; }
+    .period-slider { position: relative; height: 34px; margin: 0.35rem 9px 0; touch-action: none; user-select: none; }
+    .period-track, .period-selection {
+      position: absolute;
+      top: 15px;
+      height: 4px;
+      border-radius: 2px;
+    }
+    .period-track { right: 9px; left: 9px; background: #d3d3d3; }
+    .period-selection { background: var(--slider-accent); }
+    .period-thumb {
+      position: absolute;
+      top: 8px;
+      width: 18px;
+      height: 18px;
+      box-sizing: border-box;
+      border: 2px solid var(--slider-accent);
+      border-radius: 50%;
+      background: #fff;
+      touch-action: none;
+    }
+    .period-thumb:focus-visible { outline: 3px solid var(--slider-accent); outline-offset: 3px; }
+    .chart-scroll { max-width: 100%; overflow-x: hidden; }
+    #chart { display: block; max-width: none; background: transparent; }
+    .axis text { fill: #444; font-family: sans-serif; font-size: 12px; }
+    .axis path { stroke: #777; }
+    .axis .tick line { stroke: #ddd; }
+    .person-name { fill: #222; font-family: sans-serif; font-size: 12px; }
+    .row-band { fill: #f8f8f8; }
+    .role-bar { cursor: help; }
+    .role-bar:focus { outline: 2px solid #767676; outline-offset: 2px; stroke: none; }
+    .legend {
+      display: flex;
+      width: 100%;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+      gap: 0.45rem 1.25rem;
+      justify-content: flex-start;
+      margin: 1rem 0 0;
+      padding: 0;
+      list-style: none;
+      font-size: 0.9rem;
+    }
+    .legend li { display: flex; align-items: center; gap: 0.45rem; margin: 0; padding: 0; }
+    .legend-filter {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.25rem 0.35rem;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .legend-filter[aria-pressed="true"] { background: #eee; box-shadow: inset 0 0 0 1px #999; }
+    .legend-filter:focus-visible { outline: 2px solid #767676; outline-offset: 2px; }
+    .legend-swatch { width: 14px; height: 14px; flex: 0 0 14px; border: 1px solid rgba(0, 0, 0, 0.12); }
+    .legend-current-name { color: #222; font-weight: 700; }
+    .chart-note { margin-top: 1.5rem; color: #333; font-size: 0.8rem; line-height: 1.5; }
+    .chart-note p { margin: 0 0 0.5rem; }
+    .chart-note p:last-child { margin-bottom: 0; }
+    .text-col {
+      margin-top: 10px;
+      padding: 1rem 1.1rem;
+      border-left: 3px solid #d8d8d8;
+      background: #f8f8f8;
+      font-size: 0.75rem;
+      line-height: 1.5;
+    }
+    .text-col p { margin: 0 0 0.7rem; }
+    .text-col p:last-child { margin-bottom: 0; }
+    #error { padding: 0.75rem 1rem; border: 1px solid #d8d8d8; background: #f8f8f8; }
+    .tooltip {
+      position: fixed;
+      z-index: 10;
+      max-width: min(280px, calc(100vw - 24px));
+      padding: 0.65rem 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.14);
+      color: #222;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      pointer-events: none;
+    }
+    .tooltip[hidden] { display: none; }
+    .tooltip strong { display: block; margin-bottom: 0.2rem; }
+
+    @media (max-width: 900px) {
+      .text-col { margin-top: 0; border-top: 3px solid #d8d8d8; border-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+  <main>
+    <nav class="breadcrumb" data-pages="breadcrumb" aria-label="Brotkrumen"></nav>
+
+    <div class="title-block">
+      <h2>Amtszeiten der Mitglieder der Standeskommission</h2>
+      <p class="intro-text">Die Darstellung zeigt, wer seit 1873 in der Standeskommission des Kantons Appenzell Innerrhoden welches Amt innehatte. Die Balkenlänge entspricht der Amtsdauer; aktuelle Mitglieder sind durch fette Namen hervorgehoben.</p>
+    </div>
+
+    <div class="period-controls">
+      <p>Zeitraum wählen: <span id="period-label" aria-live="polite">2000 bis heute</span></p>
+      <div id="period-slider" class="period-slider" role="group" aria-label="Zeitraum des Diagramms">
+        <div class="period-track" aria-hidden="true"></div>
+        <div id="period-selection" class="period-selection" aria-hidden="true"></div>
+        <div id="period-start-thumb" class="period-thumb" role="slider" tabindex="0" aria-label="Beginn des Zeitraums"></div>
+        <div id="period-end-thumb" class="period-thumb" role="slider" tabindex="0" aria-label="Ende des Zeitraums"></div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <section class="chart-col" aria-label="Zeitdiagramm und Quellen">
+        <p id="error" role="alert" hidden></p>
+        <div class="chart-scroll" aria-label="Zeitdiagramm">
+          <svg id="chart" role="img" aria-labelledby="chart-title chart-description">
+            <title id="chart-title">Amtszeiten der Standeskommissionsmitglieder seit 1873</title>
+            <desc id="chart-description">Horizontales Zeitdiagramm. Jede Person erscheint einmal. Die Balken zeigen die Amtszeiten in den verschiedenen Funktionen.</desc>
+          </svg>
+        </div>
+
+        <ul class="legend" aria-label="Legende der Ämter">
+          <li><button class="legend-filter" type="button" data-role="Landammann" aria-pressed="false"><span class="legend-swatch" style="background:var(--role-landammann)"></span><span>Landammann</span></button></li>
+          <li><button class="legend-filter" type="button" data-role="Statthalter" aria-pressed="false"><span class="legend-swatch" style="background:var(--role-statthalter)"></span><span>Statthalter</span></button></li>
+          <li><button class="legend-filter" type="button" data-role="Säckelmeister" aria-pressed="false"><span class="legend-swatch" style="background:var(--role-saeckelmeister)"></span><span>Säckelmeister</span></button></li>
+          <li><button class="legend-filter" type="button" data-role="Landeshauptmann" aria-pressed="false"><span class="legend-swatch" style="background:var(--role-landeshauptmann)"></span><span>Landeshauptmann</span></button></li>
+          <li><button class="legend-filter" type="button" data-role="Bauherr" aria-pressed="false"><span class="legend-swatch" style="background:var(--role-bauherr)"></span><span>Bauherr</span></button></li>
+          <li><button class="legend-filter" type="button" data-role="Landesfähnrich" aria-pressed="false"><span class="legend-swatch" style="background:var(--role-landesfaehnrich)"></span><span>Landesfähnrich</span></button></li>
+          <li><button class="legend-filter" type="button" data-role="Armleutesäckelmeister" aria-pressed="false"><span class="legend-swatch" style="background:var(--role-armleutesaeckelmeister)"></span><span>Armleutesäckelmeister</span></button></li>
+          <li><button class="legend-filter" type="button" data-role="Zeugherr" aria-pressed="false"><span class="legend-swatch" style="background:var(--role-zeugherr)"></span><span>Zeugherr</span></button></li>
+        </ul>
+
+        <div class="chart-note">
+          <p><i>Zu den Daten:</i><br>
+            Die Amtszeiten wurden anhand der Staatskalender des Kantons Appenzell Innerrhoden zusammengestellt. Die digitalisierten Staatskalender sind beim <a href="https://archives-quickaccess.ch/search/laai/staatskalender">Landesarchiv Appenzell I.Rh.</a> zugänglich. Der Datensatz kann <a href="data/standeskommission-amtszeiten.csv" download>als CSV-Datei heruntergeladen</a> werden.</p>
+                    
+            <p><i>Weitere Quellen:</i><br> 
+            - Suter, Carl, Die Standeskommission des Kantons Appenzell I.Rh., in: Innerrhoder Geschichtsfreund 31 (1988)<br> 
+            - Staatskalender 1979-2012<br> 
+            - Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577
+            </p>
+
+        </div>
+      </section>
+
+    </div>
+
+    <aside class="text-col">
+      <p><i>Zur Visualisierung:</i> Jede Person steht einmal in der Liste. Hatte sie mehrere Ämter inne, erscheinen die jeweiligen Amtszeiten als eigene Balken in derselben Zeile. Mit der Maus oder per Tastatur-Fokus auf einem Balken werden Name, Amt, Wahljahr, Demissionsjahr und Amtsdauer angezeigt. Klicke ein Amt in der Legende an, um die Grafik danach zu filtern; ein erneuter Klick zeigt wieder alle Ämter.</p>
+      <p><i>Sortierung:</i> Die sieben aktuell amtierenden Mitglieder stehen zuerst. Die übrigen Personen folgen nach ihrem letzten Demissionsjahr, neueste zuerst.</p>
+      <p><i>Aktuelle Mitglieder:</i> Leere Demissionsfelder bedeuten, dass die Person weiterhin im Amt ist. Für die Balkenberechnung wird intern das aktuelle Jahr eingesetzt; die fett gesetzten Namen kennzeichnen diese Mitglieder.</p>
+    </aside>
+
+    <nav class="related" data-pages="related" aria-label="Weitere Visualisierungen"></nav>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <div id="tooltip" class="tooltip" role="tooltip" hidden>
+    <strong id="tooltip-name"></strong>
+    <span id="tooltip-details"></span>
+  </div>
+
+  <script>
+    async function loadHTML(id, url) {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status} beim Laden von ${url}`);
+      document.getElementById(id).innerHTML = await response.text();
+    }
+
+    loadHTML("header-placeholder", "components/header.html").catch(error => console.error(error));
+    loadHTML("footer-placeholder", "components/footer.html").catch(error => console.error(error));
+
+    const FIRST_YEAR = 1873;
+    const CURRENT_YEAR = new Date().getFullYear();
+    const ROW_MIN_HEIGHT = 24;
+    const ROW_LANE_SPACING = 13;
+    const ROW_PADDING = 8;
+    const ROLE_COLORS = new Map([
+      ["Landammann", "#440154"],
+      ["Statthalter", "#414487"],
+      ["Säckelmeister", "#2a788e"],
+      ["Landeshauptmann", "#22a884"],
+      ["Bauherr", "#7ad151"],
+      ["Landesfähnrich", "#fde725"],
+      ["Armleutesäckelmeister", "#31688e"],
+      ["Zeugherr", "#35b779"]
+    ]);
+
+    const tooltip = document.getElementById("tooltip");
+    const tooltipName = document.getElementById("tooltip-name");
+    const tooltipDetails = document.getElementById("tooltip-details");
+    const chart = d3.select("#chart");
+    const chartScroller = document.querySelector(".chart-scroll");
+    const errorBox = document.getElementById("error");
+    const periodSlider = document.getElementById("period-slider");
+    const periodSelection = document.getElementById("period-selection");
+    const periodStartThumb = document.getElementById("period-start-thumb");
+    const periodEndThumb = document.getElementById("period-end-thumb");
+    const periodLabel = document.getElementById("period-label");
+    const legendButtons = Array.from(document.querySelectorAll(".legend-filter"));
+    let selectedStartYear = 2000;
+    let selectedEndYear = CURRENT_YEAR;
+    let selectedRole = null;
+
+    function showTooltip(event, segment) {
+      tooltipName.textContent = `${segment.firstName} ${segment.lastName}`;
+      const endLabel = segment.current ? "-" : segment.endYear;
+      tooltipDetails.textContent = `${segment.role} · Wahl ${segment.startYear} · Demission ${endLabel} · ${segment.duration} ${segment.duration === 1 ? "Jahr" : "Jahre"}`;
+      tooltip.hidden = false;
+
+      const bounds = tooltip.getBoundingClientRect();
+      const clientX = event.clientX;
+      const clientY = event.clientY;
+      tooltip.style.left = `${Math.max(8, Math.min(clientX + 12, window.innerWidth - bounds.width - 8))}px`;
+      tooltip.style.top = `${Math.max(8, Math.min(clientY + 12, window.innerHeight - bounds.height - 8))}px`;
+    }
+
+    function hideTooltip() {
+      tooltip.hidden = true;
+    }
+
+    function groupPeople(rows) {
+      const peopleByName = new Map();
+      rows.forEach((row, index) => {
+        const lastName = row.Name.trim();
+        const firstName = row.Vorname.trim();
+        const role = row.Amt.trim();
+        const startYear = Number(row.Wahl);
+        const endYear = row.Demission.trim() ? Number(row.Demission) : CURRENT_YEAR;
+        const sourceDuration = Number(row["Amtsdauer pro Funktion"]);
+
+        if (!lastName && !firstName && !role && !row.Wahl.trim()) return;
+        if (!lastName || !firstName || !role || !Number.isInteger(startYear) || !Number.isInteger(endYear)) {
+          throw new Error(`Ungültiger Datensatz in CSV-Zeile ${index + 2}.`);
+        }
+        if (!ROLE_COLORS.has(role)) {
+          throw new Error(`Unbekanntes Amt «${role}» in CSV-Zeile ${index + 2}.`);
+        }
+        if (startYear < FIRST_YEAR) return;
+
+        const duration = Number.isFinite(sourceDuration) && sourceDuration > 0
+          ? sourceDuration
+          : Math.max(1, endYear - startYear);
+        const segment = {
+          firstName,
+          lastName,
+          role,
+          startYear,
+          endYear,
+          duration,
+          current: !row.Demission.trim(),
+          sourceIndex: index
+        };
+        const personKey = `${firstName}\u0000${lastName}`;
+        if (!peopleByName.has(personKey)) {
+          peopleByName.set(personKey, {
+            firstName,
+            lastName,
+            segments: [],
+            latestElection: startYear,
+            latestDemission: Number.NEGATIVE_INFINITY,
+            isCurrent: false,
+            sourceIndex: index
+          });
+        }
+        const person = peopleByName.get(personKey);
+        const duplicate = person.segments.some(item =>
+          item.role === role && item.startYear === startYear && item.endYear === endYear
+        );
+        if (!duplicate) person.segments.push(segment);
+        person.latestElection = Math.max(person.latestElection, startYear);
+        person.isCurrent = person.isCurrent || segment.current;
+        if (!segment.current) person.latestDemission = Math.max(person.latestDemission, segment.endYear);
+        person.sourceIndex = Math.min(person.sourceIndex, index);
+      });
+
+      const people = Array.from(peopleByName.values());
+      people.forEach(person => {
+        person.segments.sort((a, b) =>
+          d3.ascending(a.startYear, b.startYear) ||
+          d3.ascending(a.endYear, b.endYear) ||
+          d3.ascending(a.sourceIndex, b.sourceIndex)
+        );
+        const laneEnds = [];
+        person.segments.forEach(segment => {
+          let lane = laneEnds.findIndex(endYear => endYear <= segment.startYear);
+          if (lane === -1) lane = laneEnds.length;
+          laneEnds[lane] = segment.startYear + segment.duration;
+          segment.lane = lane;
+        });
+        person.laneCount = Math.max(1, laneEnds.length);
+        person.rowHeight = Math.max(ROW_MIN_HEIGHT, person.laneCount * ROW_LANE_SPACING + ROW_PADDING);
+      });
+
+      return people.sort((a, b) =>
+        d3.descending(a.isCurrent, b.isCurrent) ||
+        (a.isCurrent
+          ? d3.descending(a.latestElection, b.latestElection)
+          : d3.descending(a.latestDemission, b.latestDemission)) ||
+        d3.ascending(a.sourceIndex, b.sourceIndex)
+      );
+    }
+
+    function peopleInPeriod(people, startYear, endYear, role) {
+      return people.flatMap(person => {
+        const segments = person.segments.filter(segment =>
+          (!role || segment.role === role) &&
+          segment.startYear <= endYear && segment.startYear + segment.duration > startYear
+        );
+        if (!segments.length) return [];
+
+        const laneEnds = [];
+        segments.forEach(segment => {
+          let lane = laneEnds.findIndex(year => year <= segment.startYear);
+          if (lane === -1) lane = laneEnds.length;
+          laneEnds[lane] = segment.startYear + segment.duration;
+          segment.visibleLane = lane;
+        });
+        const laneCount = Math.max(1, laneEnds.length);
+        return [{
+          ...person,
+          segments,
+          laneCount,
+          rowHeight: Math.max(ROW_MIN_HEIGHT, laneCount * ROW_LANE_SPACING + ROW_PADDING)
+        }];
+      });
+    }
+
+    function draw(people, startYear, endYear, role) {
+      const visiblePeople = peopleInPeriod(people, startYear, endYear, role);
+      const width = Math.max(1, chartScroller.clientWidth);
+      const margin = {
+        top: 38,
+        right: Math.min(24, width * 0.04),
+        bottom: 24,
+        left: Math.min(190, Math.max(130, width * 0.25))
+      };
+      const plotWidth = width - margin.left - margin.right;
+      const plotHeight = visiblePeople.length
+        ? d3.sum(visiblePeople, person => person.rowHeight)
+        : 42;
+      const height = margin.top + plotHeight + margin.bottom;
+      const x = d3.scaleLinear()
+        .domain([startYear, endYear + 1])
+        .range([margin.left, width - margin.right]);
+      const tickStep = Math.max(1, Math.floor((endYear - startYear) / Math.max(5, Math.floor(plotWidth / 75))));
+
+      chart.attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`);
+      chart.selectAll(".chart-content").remove();
+      const content = chart.append("g").attr("class", "chart-content");
+
+      content.append("g")
+        .attr("class", "axis")
+        .attr("transform", `translate(0,${margin.top})`)
+        .call(d3.axisTop(x).tickValues(d3.range(startYear, endYear + 1, tickStep)).tickFormat(d3.format("d")).tickSize(-plotHeight));
+
+      if (!visiblePeople.length) {
+        content.append("text")
+          .attr("class", "empty-message")
+          .attr("x", margin.left + plotWidth / 2)
+          .attr("y", margin.top + 26)
+          .attr("text-anchor", "middle")
+          .text("Keine Amtszeiten im gewählten Zeitraum.");
+      }
+
+      let rowY = margin.top;
+      visiblePeople.forEach((person, index) => {
+        const group = content.append("g").attr("class", "person-row");
+        if (index % 2 === 0) {
+          group.append("rect")
+            .attr("class", "row-band")
+            .attr("x", margin.left)
+            .attr("y", rowY)
+            .attr("width", plotWidth)
+            .attr("height", person.rowHeight);
+        }
+        group.append("text")
+          .attr("class", "person-name")
+          .attr("font-weight", person.isCurrent ? 700 : null)
+          .attr("x", margin.left - 10)
+          .attr("y", rowY + person.rowHeight / 2 + 4)
+          .attr("text-anchor", "end")
+          .text(`${person.firstName} ${person.lastName}`);
+
+        person.segments.forEach(segment => {
+          const barHeight = 12;
+          const y = rowY + (person.rowHeight - person.laneCount * ROW_LANE_SPACING) / 2 + segment.visibleLane * ROW_LANE_SPACING;
+          const visibleStart = Math.max(segment.startYear, startYear);
+          const visibleEnd = Math.min(segment.startYear + segment.duration, endYear + 1);
+          const bar = group.append("rect")
+            .attr("class", "role-bar")
+            .attr("x", x(visibleStart))
+            .attr("y", y)
+            .attr("width", Math.max(1, x(visibleEnd) - x(visibleStart)))
+            .attr("height", barHeight)
+            .attr("rx", 1)
+            .attr("fill", ROLE_COLORS.get(segment.role))
+            .attr("stroke", "none")
+            .attr("tabindex", 0)
+            .attr("role", "img")
+            .attr("aria-label", `${person.firstName} ${person.lastName}, ${segment.role}, Wahl ${segment.startYear}, Demission ${segment.current ? "-" : segment.endYear}, ${segment.duration} ${segment.duration === 1 ? "Jahr" : "Jahre"}`);
+          bar.append("title").text(`${person.firstName} ${person.lastName} – ${segment.role}`);
+          bar.on("mouseenter", event => showTooltip(event, segment))
+            .on("mousemove", event => showTooltip(event, segment))
+            .on("mouseleave", hideTooltip)
+            .on("focus", event => {
+              const rect = event.currentTarget.getBoundingClientRect();
+              showTooltip({ clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 }, segment);
+            })
+            .on("blur", hideTooltip);
+        });
+        rowY += person.rowHeight;
+      });
+    }
+
+    d3.dsv(";", "data/standeskommission-amtszeiten.csv")
+      .then(rows => {
+        const people = groupPeople(rows);
+        if (!people.length) throw new Error("Die CSV-Datei enthält keine Amtszeiten ab 1873.");
+      function updatePeriod() {
+        const sliderWidth = Math.max(0, periodSlider.clientWidth - 18);
+        const startPosition = ((selectedStartYear - FIRST_YEAR) / (CURRENT_YEAR - FIRST_YEAR)) * sliderWidth;
+        const endPosition = ((selectedEndYear - FIRST_YEAR) / (CURRENT_YEAR - FIRST_YEAR)) * sliderWidth;
+        periodStartThumb.style.left = `${startPosition}px`;
+        periodEndThumb.style.left = `${endPosition}px`;
+        periodSelection.style.left = `${startPosition + 9}px`;
+        periodSelection.style.width = `${endPosition - startPosition}px`;
+        periodLabel.textContent = `${selectedStartYear} bis ${selectedEndYear === CURRENT_YEAR ? "heute" : selectedEndYear}`;
+        periodStartThumb.setAttribute("aria-valuemin", String(FIRST_YEAR));
+        periodStartThumb.setAttribute("aria-valuemax", String(selectedEndYear));
+        periodStartThumb.setAttribute("aria-valuenow", String(selectedStartYear));
+        periodStartThumb.setAttribute("aria-valuetext", String(selectedStartYear));
+        periodEndThumb.setAttribute("aria-valuemin", String(selectedStartYear));
+        periodEndThumb.setAttribute("aria-valuemax", String(CURRENT_YEAR));
+        periodEndThumb.setAttribute("aria-valuenow", String(selectedEndYear));
+        periodEndThumb.setAttribute("aria-valuetext", selectedEndYear === CURRENT_YEAR ? `${selectedEndYear}, heute` : String(selectedEndYear));
+        periodStartThumb.setAttribute("aria-orientation", "horizontal");
+        periodEndThumb.setAttribute("aria-orientation", "horizontal");
+        draw(people, selectedStartYear, selectedEndYear, selectedRole);
+      }
+
+      function setThumbYear(thumb, year) {
+        if (thumb === periodStartThumb) {
+          selectedStartYear = Math.max(FIRST_YEAR, Math.min(Math.round(year), selectedEndYear));
+        } else {
+          selectedEndYear = Math.min(CURRENT_YEAR, Math.max(Math.round(year), selectedStartYear));
+        }
+        updatePeriod();
+      }
+
+      let activeThumb = null;
+      periodSlider.addEventListener("pointerdown", event => {
+        const bounds = periodSlider.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, (event.clientX - bounds.left - 9) / Math.max(1, bounds.width - 18)));
+        const year = FIRST_YEAR + ratio * (CURRENT_YEAR - FIRST_YEAR);
+        activeThumb = event.target === periodStartThumb || event.target === periodEndThumb
+          ? event.target
+          : Math.abs(year - selectedStartYear) <= Math.abs(year - selectedEndYear)
+            ? periodStartThumb
+            : periodEndThumb;
+        activeThumb.focus();
+        setThumbYear(activeThumb, year);
+        periodSlider.setPointerCapture(event.pointerId);
+      });
+      periodSlider.addEventListener("pointermove", event => {
+        if (!activeThumb || !periodSlider.hasPointerCapture(event.pointerId)) return;
+        const bounds = periodSlider.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, (event.clientX - bounds.left - 9) / Math.max(1, bounds.width - 18)));
+        setThumbYear(activeThumb, FIRST_YEAR + ratio * (CURRENT_YEAR - FIRST_YEAR));
+      });
+      const stopDragging = () => { activeThumb = null; };
+      periodSlider.addEventListener("pointerup", stopDragging);
+      periodSlider.addEventListener("pointercancel", stopDragging);
+
+      [periodStartThumb, periodEndThumb].forEach(thumb => {
+        thumb.addEventListener("keydown", event => {
+          const step = event.shiftKey ? 10 : 1;
+          let year = thumb === periodStartThumb ? selectedStartYear : selectedEndYear;
+          if (event.key === "ArrowLeft" || event.key === "ArrowDown") year -= step;
+          else if (event.key === "ArrowRight" || event.key === "ArrowUp") year += step;
+          else if (event.key === "Home") year = thumb === periodStartThumb ? FIRST_YEAR : selectedStartYear;
+          else if (event.key === "End") year = thumb === periodStartThumb ? selectedEndYear : CURRENT_YEAR;
+          else return;
+          event.preventDefault();
+          setThumbYear(thumb, year);
+        });
+      });
+
+      legendButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          const role = button.dataset.role;
+          selectedRole = selectedRole === role ? null : role;
+          legendButtons.forEach(item => {
+            item.setAttribute("aria-pressed", String(item.dataset.role === selectedRole));
+          });
+          updatePeriod();
+        });
+      });
+
+      updatePeriod();
+        if ("ResizeObserver" in window) {
+        new ResizeObserver(updatePeriod).observe(chartScroller);
+        } else {
+        window.addEventListener("resize", updatePeriod);
+        }
+      window.addEventListener("resize", updatePeriod);
+      })
+      .catch(error => {
+        console.error("Amtszeiten konnten nicht geladen werden:", error);
+        errorBox.textContent = "Die Amtszeiten konnten nicht geladen werden. Bitte lade die Seite später erneut.";
+        errorBox.hidden = false;
+      });
+  </script>
+  <script src="pages.js" defer></script>
+</body>
+</html>
