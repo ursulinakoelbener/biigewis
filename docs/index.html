@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -9,9 +10,63 @@
 </head>
 <body>
   <div id="header-placeholder"></div>
+
   <main>
-    <p>Hier experimentiere ich mit Daten aus Appenzell Innerrhoden und probiere aus, wie sich diese visualisieren und interaktiv erkunden lassen. - laufend erweitert und immer offen für neue Perspektiven.</p>
+    <h1>Biigewis Date rondom Appezöll Innerrhode</h1>
+
+    <p class="subtitle">
+      Eine kleine Sammlung von Visualisierungen zu Politik und 
+      Gesellschaft in Appenzell Innerrhoden.
+    </p>
+
+    <section>
+      <p>
+        Was erzählen uns Daten über Appenzell Innerrhoden?
+        Wie funktioniert Politik in unserem Kanton? Und welche
+        Entwicklungen und Zusammenhänge lassen sich entdecken,
+        wenn Frau oder Mann genauer hinschaut?
+      </p>
+
+      <p>
+        Genau darum geht es auf dieser Seite.
+        Hier experimentiere ich mit Daten aus Appenzell Innerrhoden
+        und probiere aus, wie sich diese visualisieren und interaktiv
+        erkunden lassen.
+      </p>
+    </section>
+
+    <section>
+      <h2>Neugierig auf Zahlen und Geschichten?</h2>
+
+      <p>
+        Biigewis macht öffentlich zugängliche Daten sichtbar
+        und lädt dazu ein, sie auf neue Weise zu entdecken.
+        Aus Zahlen werden Grafiken, aus einzelnen Informationen
+        werden Zusammenhänge und vielleicht entstehen dabei
+        auch ganz neue Fragen.
+      </p>
+
+      <p>
+        Das Projekt ist ein offener Experimentierraum:
+        zum Erkunden, Vergleichen, Nachdenken und Staunen.
+              </p>
+    </section>
+
+    <section>
+      <h2>Ein Projekt in Bewegung</h2>
+
+      <p>
+        Die Seite wächst laufend weiter. Neue Daten, Ideen und
+        Perspektiven kommen hinzu. Nicht alles ist fertig,
+        manches ist experimentell.
+      </p>
+
+      <p>
+        Schön, bist du da!.
+      </p>
+    </section>
   </main>
+
   <div id="footer-placeholder"></div>
 
   <script>
@@ -20,6 +75,7 @@
       const text = await resp.text();
       document.getElementById(id).innerHTML = text;
     }
+
     loadHTML('header-placeholder', 'components/header.html');
     loadHTML('footer-placeholder', 'components/footer.html');
   </script>
