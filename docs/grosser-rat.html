@@ -6,6 +6,7 @@
   <title>Grosser Rat</title>
   <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
   <link rel="stylesheet" href="custom.css" />
+  <link rel="stylesheet" href="pages.css" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     body {
@@ -192,6 +193,7 @@
   <div id="header-placeholder"></div>
 
   <main>
+     <nav class="breadcrumb" data-pages="breadcrumb" aria-label="Brotkrumen"></nav>
     <div class="title-block">
       <h2>Grosser Rat</h2>
       <p class="intro-text">Die Zusammensetzung des Grossen Rats visualisiert. In der ersten Ansicht sind alle Mitglieder in einem Block aufgereiht. Sie können die Sitzverteilung nach verschiedenen Merkmalen darstellen und einfärben.</p>
@@ -226,6 +228,7 @@
 
       <svg id="distribution-svg"></svg>
     </section>
+    <nav class="related" data-pages="related" aria-label="Weitere Visualisierungen"></nav>
   </main>
 
   <div id="footer-placeholder"></div>
@@ -744,5 +747,6 @@
       renderDistribution();
     });
   </script>
+  <script src="pages.js" defer></script>
 </body>
 </html>
