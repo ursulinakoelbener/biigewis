@@ -6,6 +6,7 @@
   <title>Standeskommission</title>
   <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
   <link rel="stylesheet" href="custom.css" />
+  <link rel="stylesheet" href="pages.css" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     body {
@@ -105,6 +106,7 @@
   <div id="header-placeholder"></div>
 
   <main>
+    <nav class="breadcrumb" data-pages="breadcrumb" aria-label="Brotkrumen"></nav>
     <div class="title-block">
       <h2 id="gender-ratio-stk">Geschlechterverteilung</h2>
       <p class="intro-text">Die Zusammensetzung der Standeskommission, der Exekutive des Kantons Appenzell Innerrhoden, seit 1984 visualisiert. Im Jahr 2025 sind erstmals zwei Frauen in der Standeskommission vertreten.</p>
@@ -129,6 +131,7 @@
           lassen sich Name, Funktion und zuständiges Departement der jeweiligen Mitglieder anzeigen.</p>
       </aside>
     </div>
+  <nav class="related" data-pages="related" aria-label="Weitere Visualisierungen"></nav>
   </main>
 
   <div id="footer-placeholder"></div>
@@ -246,5 +249,6 @@
     });
   });
   </script>
+<script src="pages.js" defer></script>
 </body>
 </html>
