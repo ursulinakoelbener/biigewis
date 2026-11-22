@@ -20,6 +20,7 @@ Ziel ist es, mit Open Government Data (OGD) zu arbeiten und Daten mit interaktiv
 |---|---|
 | Standeskommission | Übersicht über alle Mitglieder seit 1984 |
 | Standeskommission im Zeitverlauf | Einzelne Jahre mit Regler durchblättern, Anteil Frauen und Männer |
+| Amtszeiten der Standeskommission | Amtszeiten und Funktionen der Mitglieder seit 1873 |
 | Grosser Rat | Alle Mitglieder, nach Bezirk, Geschlecht, Zugehörigkeit oder Amtsjahren dargestellt |
 
 Eine Übersicht nach Themen gibt es auf `themen.html`.
