@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Standeskommission im Zeitverlauf</title>
+  <link rel="stylesheet" href="https://edwardtufte.github.io/tufte-css/tufte.css" />
+  <link rel="stylesheet" href="custom.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --women: #fde725;   /* Viridis-Gelb, wie auf der Seite "Standeskommission" */
+      --men: #21918c;     /* Viridis-Türkis */
+      --ring: #440154;    /* Viridis-Violett: Regierender Landammann */
+      --grey: #767676;
+    }
+
+    body { font-family: sans-serif; }
+
+    main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+
+    .title-block { margin-bottom: 0.75rem; }
+
+    .intro-text {
+      margin: 0 0 1rem 0;
+      max-width: 1000px;
+      font-size: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(180px, 0.7fr);
+      gap: 1rem;
+      align-items: start;
+      justify-content: center;
+    }
+
+    .chart-col { min-width: 0; }
+
+    .chart-note { margin-top: 1.5rem; font-size: 0.8rem; line-height: 1.5; color: #333; }
+    .chart-note p { margin: 0 0 0.5rem 0; }
+    .chart-note p:last-child { margin-bottom: 0; }
+
+    .text-col {
+      margin-top: 10px;
+      background: #f8f8f8;
+      border-left: 3px solid #d8d8d8;
+      padding: 1rem 1.1rem;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      max-width: 100%;
+      justify-self: stretch;
+    }
+    .text-col p { margin-top: 0; margin-bottom: 0.7rem; }
+    .text-col p:last-child { margin-bottom: 0; }
+
+    .donut { display: block; width: 100%; max-width: 320px; height: auto; margin: 0 auto; }
+    .center-big { font-size: 34px; font-weight: 700; text-anchor: middle; fill: #111; }
+    .center-sub { font-size: 14px; text-anchor: middle; fill: #555; }
+
+    .legend { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem 1.4rem; font-size: 0.9rem; }
+    .legend li { display: flex; align-items: center; gap: 0.45rem; margin: 0; padding: 0; }
+    .key { width: 14px; height: 14px; border-radius: 50%; box-sizing: border-box; }
+    .key.ring { background: transparent; border: 2px solid var(--ring); }
+
+    .timeline { margin-top: 1.5rem; max-width: 640px; margin-left: auto; margin-right: auto; }
+    .year { font-size: 1.4rem; font-weight: 600; text-align: center; margin: 0 0 0.4rem; }
+    .row { display: flex; align-items: center; gap: 0.75rem; }
+    .row input[type=range] { flex: 1; accent-color: var(--grey); height: 40px; margin: 0; }
+    .row button {
+      font: inherit; width: 40px; height: 40px; cursor: pointer;
+      background: #fff; border: 1px solid #ccc; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; padding: 0; color: #222;
+    }
+    .row button:disabled { opacity: 0.35; cursor: default; }
+    .row button:focus-visible, .row input:focus-visible { outline: 3px solid var(--men); outline-offset: 2px; }
+    .ends { display: flex; justify-content: space-between; margin: 0 52px; font-size: 0.85rem; color: #555; }
+
+    .table-wrap { max-width: 760px; margin: 1.5rem auto 0; overflow-x: auto; }
+    .member-table { width: 100%; border-collapse: collapse; font-size: 1.2rem; margin: 0; }
+    .member-table caption { text-align: left; font-weight: 600; font-size: 1.6rem; margin-bottom: 0.6rem; }
+    .member-table th, .member-table td { text-align: left; padding: 0.55rem 0.7rem; border-bottom: 1px solid #ddd; vertical-align: top; }
+    .member-table th { border-bottom: 2px solid #999; font-weight: 600; }
+    .dot { display: inline-block; width: 16px; height: 16px; border-radius: 50%; box-sizing: border-box; vertical-align: -2px; margin-right: 0.5rem; }
+
+    #error { padding: 0.75rem 1rem; border: 1px solid #d8d8d8; background: #f8f8f8; }
+
+    @media (max-width: 900px) {
+      .content-grid { grid-template-columns: 1fr; }
+      .text-col { margin-top: 0; border-left: none; border-top: 3px solid #d8d8d8; }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+  <main>
+    <div class="title-block">
+      <h2 id="gender-timeline">Geschlechterverteilung im Zeitverlauf</h2>
+      <p class="intro-text">Wähle ein Jahr und sieh, wie viele Frauen und Männer seit 1984 in der Standeskommission des Kantons Appenzell Innerrhoden vertreten waren.</p>
+    </div>
+
+    <div class="content-grid">
+      <div class="chart-col">
+        <p id="error" hidden></p>
+
+        <svg id="donut" class="donut" viewBox="0 0 300 300" role="img"></svg>
+
+        <div class="timeline">
+          <p class="year" id="year" aria-live="polite"></p>
+          <div class="row">
+            <button id="prev" type="button" aria-label="Vorheriges Jahr"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <input id="range" type="range" min="0" value="0" aria-label="Jahr wählen" />
+            <button id="next" type="button" aria-label="Nächstes Jahr"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <div class="ends"><span id="first"></span><span id="last"></span></div>
+        </div>
+
+        <ul class="legend">
+          <li><span class="key" style="background: var(--women)"></span><span id="legend-women"></span></li>
+          <li><span class="key" style="background: var(--men)"></span><span id="legend-men"></span></li>
+          <li><span class="key ring"></span><span>Regierender Landammann</span></li>
+        </ul>
+
+        <div class="table-wrap">
+          <table class="member-table">
+            <caption id="table-caption"></caption>
+            <thead>
+              <tr><th scope="col">Name</th><th scope="col">Funktion</th><th scope="col">Departement</th></tr>
+            </thead>
+            <tbody id="member-rows"></tbody>
+          </table>
+        </div>
+
+        <div class="chart-note">
+          <p><i>Zu den Daten:</i> Die Daten stammen aus den Staatskalendern der kantonalen Verwaltung, die vom Landesarchiv Appenzell I.Rh. <a href="https://archives-quickaccess.ch/search/laai/staatskalender">digitalisiert</a> wurden. Der dabei entstandene Datensatz kann <a href="data/standeskommission.csv" download>als CSV heruntergeladen</a> werden. Dargestellt ist jeweils der Stand eines Jahres. Bis 1995 hatte die Standeskommission neun, seither sieben Mitglieder.</p>
+
+          <p><i>Quellen:</i>
+            Suter, Carl, Die Standeskommission des Kantons Appenzell I.Rh., in: Innerrhoder Geschichtsfreund 31 (1988),
+            Staatskalender 1979-2012, Appenzeller Geschichte Band 3, S. ohne Seitenangabe, nach S. 577.
+          </p>
+        </div>
+      </div>
+
+      <aside class="text-col">
+        <p><i>Zur Visualisierung:</i> Männer sind in Türkis, Frauen in Gelb dargestellt. Mit dem Regler, den Pfeilen oder den Pfeiltasten der Tastatur wechselst du das Jahr. Unter dem Regler sind Name, Funktion und zuständiges Departement der Mitglieder im gewählten Jahr aufgeführt.</p>
+        <p>Die Gesamtübersicht aller Jahre findest du auf der Seite <a href="standeskommission.html">Standeskommission</a>.</p>
+      </aside>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script>
+  async function loadHTML(id, url) {
+    const resp = await fetch(url);
+    const text = await resp.text();
+    document.getElementById(id).innerHTML = text;
+  }
+  loadHTML('header-placeholder', 'components/header.html');
+  loadHTML('footer-placeholder', 'components/footer.html');
+  </script>
+
+  <script>
+  // --- Einstellungen -----------------------------------------------------------
+  const START_YEAR = 1984;
+  const WOMEN = "#fde725", MEN = "#21918c", RING = "#440154";
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const duration = reduceMotion ? 0 : 450;
+
+  // --- Kreisdiagramm vorbereiten -----------------------------------------------
+  const arc = d3.arc().innerRadius(80).outerRadius(135);
+  const pie = d3.pie().sort(null).value(d => d.value);
+
+  const donut = d3.select("#donut");
+  const g = donut.append("g").attr("transform", "translate(150,150)");
+  const slices = g.selectAll("path")
+    .data(["f", "m"])
+    .join("path")
+    .attr("fill", k => (k === "f" ? WOMEN : MEN))
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 1)
+    .each(function () { this._current = { startAngle: 0, endAngle: 0 }; });
+  const centerBig = donut.append("text").attr("class", "center-big").attr("x", 150).attr("y", 158);
+  const centerSub = donut.append("text").attr("class", "center-sub").attr("x", 150).attr("y", 182).text("Frauen");
+
+  const $ = id => document.getElementById(id);
+
+  // --- Daten laden und Seite aufbauen --------------------------------------------
+  d3.dsv(";", "data/standeskommission.csv").then(raw => {
+    const data = raw.filter(d => +d.Jahr >= START_YEAR);
+    const byYear = d3.group(data, d => +d.Jahr);
+    const years = Array.from(byYear.keys()).sort(d3.ascending);
+    const state = { index: years.length - 1 }; // Start: aktuellstes Jahr
+
+    function update() {
+      const year = years[state.index];
+      const members = byYear.get(year).slice().sort((a, b) => +a.Reihenfolge - +b.Reihenfolge);
+      const total = members.length;
+      const women = members.filter(d => d.Geschlecht === "f").length;
+      const men = total - women;
+      const share = Math.round(100 * women / total);
+
+      // Kreisdiagramm
+      const arcs = pie([{ value: women }, { value: men }]);
+      slices.data(arcs).transition().duration(duration)
+        .attrTween("d", function (d) {
+          const i = d3.interpolate(this._current, d);
+          this._current = i(1);
+          return t => arc(i(t));
+        });
+      centerBig.text(`${women} von ${total}`);
+      donut.attr("aria-label", `${year}: ${women} Frauen und ${men} Männer, Frauenanteil ${share} Prozent`);
+      $("legend-women").textContent = `Frauen ${women} (${share} %)`;
+      $("legend-men").textContent = `Männer ${men} (${100 - share} %)`;
+
+      // Tabelle mit Name, Funktion und Departement
+      $("table-caption").textContent = `Mitglieder der Standeskommission im Jahr ${year}`;
+      const tbody = d3.select("#member-rows");
+      tbody.html("");
+      members.forEach(d => {
+        const isLandammann = d.Funktion.includes("Regierender Landammann");
+        const tr = tbody.append("tr");
+        const name = tr.append("td");
+        name.append("span").attr("class", "dot")
+          .style("background", d.Geschlecht === "f" ? WOMEN : MEN)
+          .style("border", isLandammann ? `2px solid ${RING}` : "none");
+        name.append("span").text(`${d.Vorname} ${d.Nachname}`);
+        tr.append("td").text(d.Funktion || "–");
+        tr.append("td").text(d.Departement || "–");
+      });
+
+      // Zeitstrahl
+      const label = state.index === years.length - 1 ? `${year} (aktuell)` : String(year);
+      $("year").textContent = label;
+      $("range").value = state.index;
+      $("range").setAttribute("aria-valuetext", label);
+      $("prev").disabled = state.index === 0;
+      $("next").disabled = state.index === years.length - 1;
+    }
+
+    function goTo(i) {
+      state.index = Math.min(Math.max(i, 0), years.length - 1);
+      update();
+    }
+
+    $("range").max = years.length - 1;
+    $("first").textContent = years[0];
+    $("last").textContent = years[years.length - 1];
+    $("range").addEventListener("input", e => goTo(+e.target.value));
+    $("prev").addEventListener("click", () => goTo(state.index - 1));
+    $("next").addEventListener("click", () => goTo(state.index + 1));
+    update();
+  }).catch(err => {
+    console.error(err);
+    const box = $("error");
+    box.textContent = "Die Daten konnten nicht geladen werden.";
+    box.hidden = false;
+  });
+  </script>
+</body>
+</html>
