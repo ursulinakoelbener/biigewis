@@ -256,6 +256,10 @@
     let selectedEndYear = CURRENT_YEAR;
     let selectedRole = null;
 
+    function segmentEndYear(segment) {
+      return segment.current ? CURRENT_YEAR : segment.startYear + segment.duration;
+    }
+
     function showTooltip(event, segment) {
       tooltipName.textContent = `${segment.firstName} ${segment.lastName}`;
       const endLabel = segment.current ? "-" : segment.endYear;
@@ -339,7 +343,7 @@
         person.segments.forEach(segment => {
           let lane = laneEnds.findIndex(endYear => endYear <= segment.startYear);
           if (lane === -1) lane = laneEnds.length;
-          laneEnds[lane] = segment.startYear + segment.duration;
+          laneEnds[lane] = segmentEndYear(segment);
           segment.lane = lane;
         });
         person.laneCount = Math.max(1, laneEnds.length);
@@ -359,7 +363,10 @@
       return people.flatMap(person => {
         const segments = person.segments.filter(segment =>
           (!role || segment.role === role) &&
-          segment.startYear <= endYear && segment.startYear + segment.duration > startYear
+          segment.startYear <= endYear &&
+          (segment.current
+            ? segmentEndYear(segment) >= startYear
+            : segmentEndYear(segment) > startYear)
         );
         if (!segments.length) return [];
 
@@ -367,7 +374,7 @@
         segments.forEach(segment => {
           let lane = laneEnds.findIndex(year => year <= segment.startYear);
           if (lane === -1) lane = laneEnds.length;
-          laneEnds[lane] = segment.startYear + segment.duration;
+          laneEnds[lane] = segmentEndYear(segment);
           segment.visibleLane = lane;
         });
         const laneCount = Math.max(1, laneEnds.length);
@@ -442,7 +449,9 @@
           const barHeight = 12;
           const y = rowY + (person.rowHeight - person.laneCount * ROW_LANE_SPACING) / 2 + segment.visibleLane * ROW_LANE_SPACING;
           const visibleStart = Math.max(segment.startYear, startYear);
-          const visibleEnd = Math.min(segment.startYear + segment.duration, endYear + 1);
+          const visibleEnd = segment.current
+            ? endYear + 1
+            : Math.min(segmentEndYear(segment), endYear + 1);
           const bar = group.append("rect")
             .attr("class", "role-bar")
             .attr("x", x(visibleStart))
