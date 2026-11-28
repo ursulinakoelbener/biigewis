@@ -452,8 +452,8 @@
         return lines.slice(0, 3).join("\n");
       }
 
-      function drawGroupLabel(svg, cx, y, labelText) {
-        const lines = wrapLabel(labelText, 22).split("\n");
+      function drawGroupLabel(svg, cx, y, labelText, maxChars = 22) {
+        const lines = wrapLabel(labelText, maxChars).split("\n");
         svg.append("text")
           .attr("x", cx)
           .attr("y", y)
@@ -633,7 +633,8 @@
               .on("mouseout", () => tooltip.style("display", "none"));
           });
 
-          drawGroupLabel(svg, groupX + groupWidth / 2, labelBaseY, labelFor(group.key, state.arrangement));
+          const labelCx = groupX + 20 + (5 - 1) * colGap / 2;
+          drawGroupLabel(svg, labelCx, labelBaseY, labelFor(group.key, state.arrangement), 18);
         });
 
         svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
@@ -744,7 +745,8 @@
               .on("mouseout", () => tooltip.style("display", "none"));
           });
 
-          drawGroupLabel(svg, groupX + groupWidth / 2, labelBaseY, labelFor(group.key, state.arrangement));
+          const labelCx = groupX + 20 + (colsPerGroup - 1) * colGap / 2;
+          drawGroupLabel(svg, labelCx, labelBaseY, labelFor(group.key, state.arrangement), 18);
         });
 
         svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
