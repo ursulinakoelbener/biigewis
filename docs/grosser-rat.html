@@ -768,23 +768,30 @@
 
         if (state.colorMode === "Bezirk") {
           districtOrder.forEach((district) => {
-            entries.push({ label: district, color: districtColorScale(district) });
+            const count = rows.filter(member => member.Bezirk === district).length;
+            entries.push({ label: `${district} (${count})`, color: districtColorScale(district) });
           });
         } else if (state.colorMode === "Geschlecht") {
-          entries.push({ label: "Frau", color: "#f1d34c" });
-          entries.push({ label: "Mann", color: "#2f9ea4" });
+          const women = rows.filter(member => member.Geschlecht === "f").length;
+          const men = rows.filter(member => member.Geschlecht === "m").length;
+          entries.push({ label: `Frauen (${women})`, color: "#f1d34c" });
+          entries.push({ label: `Männer (${men})`, color: "#2f9ea4" });
         } else if (state.colorMode === "Zugehörigkeit") {
           const colors = zugehoerigkeitColorScale.range();
-          entries.push({ label: "Arbeitnehmende", color: colors[0] });
-          entries.push({ label: "Bäuerinnen und Bauern", color: colors[1] });
-          entries.push({ label: "Gewerbe", color: colors[2] });
+          ["Arbeitnehmende", "Bäuerinnen und Bauern", "Gewerbe"].forEach((category, index) => {
+            const count = rows.filter(member =>
+              normalizeZugehoerigkeit(member.Zugehörigkeit) === category
+            ).length;
+            entries.push({ label: `${category} (${count})`, color: colors[index] });
+          });
         } else if (state.colorMode === "Amtsjahre") {
           const min = 1;
           const max = Math.max(20, ...rows.map(d => d.Amtsdauer));
           const scale = d3.scaleSequential(d3.interpolateViridis).domain([min, max]);
           const labels = [min, Math.round((min + max) / 2), max];
           labels.forEach((value) => {
-            entries.push({ label: `${value} Jahre`, color: scale(value) });
+            const count = rows.filter(member => member.Amtsdauer === value).length;
+            entries.push({ label: `${value} Jahre (${count})`, color: scale(value) });
           });
         }
 
