@@ -343,6 +343,40 @@
         return "default";
       }
 
+      function sortMembersByMode(list, mode) {
+        const characteristicOrder = {
+          Bezirk: districtOrder,
+          Geschlecht: ["f", "m"],
+          Zugehörigkeit: ["Arbeitnehmende", "Bäuerinnen und Bauern", "Gewerbe"]
+        };
+
+        return list.slice().sort((a, b) => {
+          if (mode === "Amtsjahre") {
+            const byService = a.Amtsdauer - b.Amtsdauer;
+            if (byService !== 0) return byService;
+          }
+
+          if (mode && mode !== "default" && mode !== "Amtsjahre") {
+            const av = valueForGrouping(a, mode);
+            const bv = valueForGrouping(b, mode);
+            const order = characteristicOrder[mode];
+            const ai = order ? order.indexOf(av) : -1;
+            const bi = order ? order.indexOf(bv) : -1;
+
+            if (ai !== bi) {
+              if (ai === -1) return 1;
+              if (bi === -1) return -1;
+              return ai - bi;
+            }
+
+            const byCharacteristic = String(av).localeCompare(String(bv));
+            if (byCharacteristic !== 0) return byCharacteristic;
+          }
+
+          return a.Jahr - b.Jahr || a.Name.localeCompare(b.Name);
+        });
+      }
+
       function colorFor(member, mode, valueList) {
         if (mode === "default") return "#111";
 
@@ -365,9 +399,9 @@
         return scale(index >= 0 ? index : 0);
       }
 
-      function groupAndSort(list, mode) {
+      function groupAndSort(list, mode, sortMode = mode) {
         if (mode === "default") {
-          return [{ key: "Alle", members: list.slice().sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name)) }];
+          return [{ key: "Alle", members: sortMembersByMode(list, sortMode) }];
         }
 
         const groups = d3.group(list, d => valueForGrouping(d, mode));
@@ -380,7 +414,7 @@
 
         return entries.map(([key, members]) => ({
           key,
-          members: members.slice().sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name))
+          members: sortMembersByMode(members, sortMode)
         }));
       }
 
@@ -434,11 +468,55 @@
           .text(d => d);
       }
 
+      function captureCirclePositions() {
+        const positions = new Map();
+        d3.select("#distribution-svg").selectAll("circle").each(function(member) {
+          if (!member || !member.Name) return;
+          positions.set(member.Name, {
+            cx: Number(d3.select(this).attr("cx")),
+            cy: Number(d3.select(this).attr("cy"))
+          });
+        });
+        return positions;
+      }
+
+      function animateCircles(previousPositions) {
+        if (previousPositions.size === 0) return;
+
+        d3.select("#distribution-svg").selectAll("circle")
+          .each(function(member, index) {
+            const circle = d3.select(this);
+            const target = {
+              cx: Number(circle.attr("cx")),
+              cy: Number(circle.attr("cy"))
+            };
+            const previous = previousPositions.get(member.Name);
+
+            if (previous) {
+              circle
+                .attr("cx", previous.cx)
+                .attr("cy", previous.cy);
+            } else {
+              circle
+                .style("opacity", 0);
+            }
+
+            circle
+              .transition()
+              .delay(index * 4)
+              .duration(650)
+              .ease(d3.easeCubicInOut)
+              .style("opacity", 1)
+              .attr("cx", target.cx)
+              .attr("cy", target.cy);
+          });
+      }
+
       function renderDefault() {
         const svg = d3.select("#distribution-svg");
         svg.selectAll("*").remove();
 
-        const members = rows.slice().sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name));
+        const members = sortMembersByMode(rows, state.colorMode);
         const cols = 10;
         const startX = 20;
         const startY = 20;
@@ -454,6 +532,7 @@
           const y = startY + row * rowGap;
 
           svg.append("circle")
+            .datum(member)
             .attr("cx", x)
             .attr("cy", y)
             .attr("r", 9)
@@ -476,7 +555,7 @@
 
         const groups = districtOrder.map(name => ({
           key: name,
-          members: rows.filter(d => d.Bezirk === name).sort((a, b) => a.Jahr - b.Jahr || a.Name.localeCompare(b.Name))
+          members: sortMembersByMode(rows.filter(d => d.Bezirk === name), state.colorMode)
         }));
 
         const columns = 5;
@@ -504,6 +583,7 @@
             const y = groupY + row * rowGap;
 
             svg.append("circle")
+              .datum(member)
               .attr("cx", x)
               .attr("cy", y)
               .attr("r", 9)
@@ -527,7 +607,7 @@
         const svg = d3.select("#distribution-svg");
         svg.selectAll("*").remove();
 
-        const groups = groupAndSort(rows, state.arrangement);
+        const groups = groupAndSort(rows, state.arrangement, state.colorMode);
         const maxMembers = Math.max(...groups.map(g => g.members.length), 1);
         const maxRows = Math.max(1, Math.ceil(maxMembers / 6));
         const groupWidth = 230;
@@ -550,6 +630,7 @@
             const y = startY + row * rowGap;
 
             svg.append("circle")
+              .datum(member)
               .attr("cx", x)
               .attr("cy", y)
               .attr("r", 9)
@@ -573,7 +654,7 @@
         const svg = d3.select("#distribution-svg");
         svg.selectAll("*").remove();
 
-        const groups = groupAndSort(rows, "Amtsjahre");
+        const groups = groupAndSort(rows, "Amtsjahre", state.colorMode);
         const membersPerRow = 2;
         const rowGap = 24;
         const colGap = 18;
@@ -597,6 +678,7 @@
             const y = startY + row * rowGap;
 
             svg.append("circle")
+              .datum(member)
               .attr("cx", x)
               .attr("cy", y)
               .attr("r", 9)
@@ -617,27 +699,31 @@
       }
 
       function renderDistribution() {
+        const previousPositions = captureCirclePositions();
         renderLegend();
 
         if (state.arrangement === "default") {
           renderDefault();
+          animateCircles(previousPositions);
           return;
         }
 
         if (state.arrangement === "Bezirk") {
           renderDistrictLayout();
+          animateCircles(previousPositions);
           return;
         }
 
         if (state.arrangement === "Amtsjahre") {
           renderAmtsjahreTimeline();
+          animateCircles(previousPositions);
           return;
         }
 
         const svg = d3.select("#distribution-svg");
         svg.selectAll("*").remove();
 
-        const groups = groupAndSort(rows, state.arrangement);
+        const groups = groupAndSort(rows, state.arrangement, state.colorMode);
         const maxMembers = Math.max(...groups.map(g => g.members.length), 1);
         const maxRows = Math.max(1, Math.ceil(maxMembers / 6));
         const colsPerGroup = Math.min(8, Math.max(4, Math.ceil(Math.sqrt(maxMembers))));
@@ -661,6 +747,7 @@
             const y = startY + row * rowGap;
 
             svg.append("circle")
+              .datum(member)
               .attr("cx", x)
               .attr("cy", y)
               .attr("r", 9)
@@ -678,6 +765,8 @@
 
         svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
            .attr("preserveAspectRatio", "xMinYMin meet");
+
+        animateCircles(previousPositions);
       }
 
       function renderLegend() {
