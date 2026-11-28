@@ -468,6 +468,60 @@
           .text(d => d);
       }
 
+      function formatPercent(value) {
+        const rounded = Math.round(value * 10) / 10;
+        return `${String(rounded).replace(".", ",")} %`;
+      }
+
+      function drawGroupStats(svg, cx, y, members) {
+        if (!members || members.length === 0) return;
+
+        const entries = [];
+
+        if (state.colorMode === "Geschlecht") {
+          entries.push({
+            label: "Frauen",
+            count: members.filter(member => member.Geschlecht === "f").length
+          });
+          entries.push({
+            label: "Männer",
+            count: members.filter(member => member.Geschlecht === "m").length
+          });
+        } else if (state.colorMode === "Bezirk") {
+          districtOrder.forEach((district) => {
+            const count = members.filter(member => member.Bezirk === district).length;
+            if (count > 0) entries.push({ label: district, count });
+          });
+        } else if (state.colorMode === "Zugehörigkeit") {
+          ["Arbeitnehmende", "Bäuerinnen und Bauern", "Gewerbe"].forEach((category) => {
+            const count = members.filter(member =>
+              normalizeZugehoerigkeit(member.Zugehörigkeit) === category
+            ).length;
+            if (count > 0) entries.push({ label: category, count });
+          });
+        } else if (state.colorMode === "Amtsjahre") {
+          const years = [...new Set(members.map(member => member.Amtsdauer))].sort((a, b) => a - b);
+          years.forEach((year) => {
+            const count = members.filter(member => member.Amtsdauer === year).length;
+            entries.push({ label: `${year} Jahre`, count });
+          });
+        }
+
+        const text = svg.append("text")
+          .attr("x", cx)
+          .attr("y", y)
+          .attr("text-anchor", "start")
+          .attr("font-size", 11)
+          .attr("fill", "#555");
+
+        entries.forEach((entry, index) => {
+          text.append("tspan")
+            .attr("x", cx)
+            .attr("dy", index === 0 ? 0 : 13)
+            .text(`${entry.label}: ${formatPercent(entry.count / members.length * 100)} (${entry.count})`);
+        });
+      }
+
       function captureCirclePositions() {
         const positions = new Map();
         d3.select("#distribution-svg").selectAll("circle").each(function(member) {
@@ -566,7 +620,7 @@
 
         const width = Math.max(1000, startX + columns * groupWidth + 60);
         const boundedWidth = Math.min(width, legendWidth);
-        const height = labelBaseY + 40;
+        const height = labelBaseY + 70;
 
         groups.forEach((group, groupIndex) => {
           const groupX = startX + (groupIndex % columns) * groupWidth;
@@ -590,6 +644,7 @@
           });
 
           drawGroupLabel(svg, groupX + 50, labelBaseY, group.key);
+          drawGroupStats(svg, groupX + 20, labelBaseY + 28, group.members);
         });
 
         svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
@@ -611,7 +666,7 @@
         const labelBaseY = startY + maxRows * rowGap + 30;
         const width = Math.max(900, startX + groups.length * groupWidth + 80);
         const boundedWidth = Math.min(width, legendWidth);
-        const height = labelBaseY + 40;
+        const height = labelBaseY + 70;
 
         groups.forEach((group, groupIndex) => {
           const groupX = startX + groupIndex * groupWidth;
@@ -635,6 +690,7 @@
 
           const labelCx = groupX + 20 + (5 - 1) * colGap / 2;
           drawGroupLabel(svg, labelCx, labelBaseY, labelFor(group.key, state.arrangement), 18);
+          drawGroupStats(svg, groupX + 20, labelBaseY + 28, group.members);
         });
 
         svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
@@ -657,7 +713,7 @@
         const labelBaseY = startY + maxRowsInGroup * rowGap + 8;
         const width = Math.max(900, startX + groups.length * (groupWidth + groupGap) + 18);
         const boundedWidth = Math.min(width, legendWidth);
-        const height = labelBaseY + 30;
+        const height = labelBaseY + 70;
 
         groups.forEach((group, groupIndex) => {
           const groupX = startX + groupIndex * (groupWidth + groupGap);
@@ -680,6 +736,7 @@
           });
 
           drawGroupLabel(svg, groupX + 35, labelBaseY, `${group.key} Jahre`);
+          drawGroupStats(svg, groupX + 10, labelBaseY + 28, group.members);
         });
 
         svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
@@ -723,7 +780,7 @@
         const labelBaseY = startY + maxRows * rowGap + 35;
         const width = Math.max(900, startX + groups.length * groupWidth + 80);
         const boundedWidth = Math.min(width, legendWidth);
-        const height = labelBaseY + 40;
+        const height = labelBaseY + 70;
 
         groups.forEach((group, groupIndex) => {
           const groupX = startX + groupIndex * groupWidth;
@@ -747,6 +804,7 @@
 
           const labelCx = groupX + 20 + (colsPerGroup - 1) * colGap / 2;
           drawGroupLabel(svg, labelCx, labelBaseY, labelFor(group.key, state.arrangement), 18);
+          drawGroupStats(svg, groupX + 20, labelBaseY + 28, group.members);
         });
 
         svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
