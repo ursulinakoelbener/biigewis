@@ -406,6 +406,9 @@
 
         const groups = d3.group(list, d => valueForGrouping(d, mode));
         const entries = [...groups.entries()].sort((a, b) => {
+          const sizeDifference = b[1].length - a[1].length;
+          if (sizeDifference !== 0) return sizeDifference;
+
           const av = a[0];
           const bv = b[0];
           if (typeof av === "number" && typeof bv === "number") return av - bv;
@@ -457,7 +460,7 @@
         svg.append("text")
           .attr("x", cx)
           .attr("y", y)
-          .attr("text-anchor", "middle")
+          .attr("text-anchor", "start")
           .attr("font-size", 11)
           .attr("fill", "#333")
           .selectAll("tspan")
@@ -466,6 +469,7 @@
           .attr("x", cx)
           .attr("dy", (d, i) => i === 0 ? 0 : 12)
           .text(d => d);
+        return lines.length;
       }
 
       function formatPercent(value) {
@@ -606,7 +610,10 @@
         const groups = districtOrder.map(name => ({
           key: name,
           members: sortMembersByMode(rows.filter(d => d.Bezirk === name), state.colorMode)
-        }));
+        })).sort((a, b) =>
+          b.members.length - a.members.length ||
+          districtOrder.indexOf(a.key) - districtOrder.indexOf(b.key)
+        );
 
         const columns = 5;
         const groupWidth = 150;
@@ -620,7 +627,7 @@
 
         const width = Math.max(1000, startX + columns * groupWidth + 60);
         const boundedWidth = Math.min(width, legendWidth);
-        const height = labelBaseY + 70;
+        const height = labelBaseY + 95;
 
         groups.forEach((group, groupIndex) => {
           const groupX = startX + (groupIndex % columns) * groupWidth;
@@ -643,8 +650,8 @@
               .on("mouseout", () => tooltip.style("display", "none"));
           });
 
-          drawGroupLabel(svg, groupX + 50, labelBaseY, group.key);
-          drawGroupStats(svg, groupX + 20, labelBaseY + 28, group.members);
+          const titleLines = drawGroupLabel(svg, groupX + 20, labelBaseY, group.key);
+          drawGroupStats(svg, groupX + 20, labelBaseY + titleLines * 12 + 16, group.members);
         });
 
         svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
@@ -666,7 +673,7 @@
         const labelBaseY = startY + maxRows * rowGap + 30;
         const width = Math.max(900, startX + groups.length * groupWidth + 80);
         const boundedWidth = Math.min(width, legendWidth);
-        const height = labelBaseY + 70;
+        const height = labelBaseY + 95;
 
         groups.forEach((group, groupIndex) => {
           const groupX = startX + groupIndex * groupWidth;
@@ -688,9 +695,8 @@
               .on("mouseout", () => tooltip.style("display", "none"));
           });
 
-          const labelCx = groupX + 20 + (5 - 1) * colGap / 2;
-          drawGroupLabel(svg, labelCx, labelBaseY, labelFor(group.key, state.arrangement), 18);
-          drawGroupStats(svg, groupX + 20, labelBaseY + 28, group.members);
+          const titleLines = drawGroupLabel(svg, groupX + 20, labelBaseY, labelFor(group.key, state.arrangement), 18);
+          drawGroupStats(svg, groupX + 20, labelBaseY + titleLines * 12 + 16, group.members);
         });
 
         svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
@@ -713,7 +719,7 @@
         const labelBaseY = startY + maxRowsInGroup * rowGap + 8;
         const width = Math.max(900, startX + groups.length * (groupWidth + groupGap) + 18);
         const boundedWidth = Math.min(width, legendWidth);
-        const height = labelBaseY + 70;
+        const height = labelBaseY + 95;
 
         groups.forEach((group, groupIndex) => {
           const groupX = startX + groupIndex * (groupWidth + groupGap);
@@ -735,8 +741,8 @@
               .on("mouseout", () => tooltip.style("display", "none"));
           });
 
-          drawGroupLabel(svg, groupX + 35, labelBaseY, `${group.key} Jahre`);
-          drawGroupStats(svg, groupX + 10, labelBaseY + 28, group.members);
+          const titleLines = drawGroupLabel(svg, groupX + 10, labelBaseY, `${group.key} Jahre`, 10);
+          drawGroupStats(svg, groupX + 10, labelBaseY + titleLines * 12 + 16, group.members);
         });
 
         svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
@@ -780,7 +786,7 @@
         const labelBaseY = startY + maxRows * rowGap + 35;
         const width = Math.max(900, startX + groups.length * groupWidth + 80);
         const boundedWidth = Math.min(width, legendWidth);
-        const height = labelBaseY + 70;
+        const height = labelBaseY + 95;
 
         groups.forEach((group, groupIndex) => {
           const groupX = startX + groupIndex * groupWidth;
@@ -802,9 +808,8 @@
               .on("mouseout", () => tooltip.style("display", "none"));
           });
 
-          const labelCx = groupX + 20 + (colsPerGroup - 1) * colGap / 2;
-          drawGroupLabel(svg, labelCx, labelBaseY, labelFor(group.key, state.arrangement), 18);
-          drawGroupStats(svg, groupX + 20, labelBaseY + 28, group.members);
+          const titleLines = drawGroupLabel(svg, groupX + 20, labelBaseY, labelFor(group.key, state.arrangement), 18);
+          drawGroupStats(svg, groupX + 20, labelBaseY + titleLines * 12 + 16, group.members);
         });
 
         svg.attr("viewBox", `0 0 ${boundedWidth} ${height}`)
