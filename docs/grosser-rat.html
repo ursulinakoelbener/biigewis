@@ -330,36 +330,61 @@
 
       function labelFor(value, mode) {
         if (mode === "Geschlecht") return value === "f" ? "Frau" : "Mann";
-        if (mode === "Amtsjahre") return `${value} Jahre`;
+        if (mode === "Amtsjahre") return String(value);
         if (mode === "Zugehörigkeit") return normalizeZugehoerigkeit(value);
         return String(value);
+      }
+
+      const amtsjahreGroups = ["1-5 Jahre", "6-10 Jahre", "11-15 Jahre", "16-20 Jahre", "20+ Jahre"];
+
+      function amtsjahreGroup(year) {
+        if (year <= 5) return "1-5 Jahre";
+        if (year <= 10) return "6-10 Jahre";
+        if (year <= 15) return "11-15 Jahre";
+        if (year <= 20) return "16-20 Jahre";
+        return "20+ Jahre";
       }
 
       function valueForGrouping(member, mode) {
         if (mode === "Bezirk") return member.Bezirk;
         if (mode === "Geschlecht") return member.Geschlecht;
         if (mode === "Zugehörigkeit") return normalizeZugehoerigkeit(member.Zugehörigkeit);
-        if (mode === "Amtsjahre") return member.Amtsdauer;
+        if (mode === "Amtsjahre") return amtsjahreGroup(member.Amtsdauer);
         return "default";
       }
 
+      function amtsjahreColorScale() {
+        return d3.scaleSequential(d3.interpolateViridis).domain([0, amtsjahreGroups.length - 1]);
+      }
+
       function sortMembersByMode(list, mode) {
-        const characteristicOrder = {
-          Bezirk: districtOrder,
-          Geschlecht: ["f", "m"],
-          Zugehörigkeit: ["Arbeitnehmende", "Bäuerinnen und Bauern", "Gewerbe"]
-        };
+        let characteristicOrder = null;
+
+        if (mode === "Bezirk") {
+          characteristicOrder = districtOrder;
+        } else if (mode && mode !== "default" && mode !== "Amtsjahre") {
+          const values = [...new Set(list.map(member => valueForGrouping(member, mode)))];
+          characteristicOrder = values.sort((a, b) => {
+            const countDifference =
+              list.filter(member => valueForGrouping(member, mode) === b).length -
+              list.filter(member => valueForGrouping(member, mode) === a).length;
+            return countDifference || String(a).localeCompare(String(b));
+          });
+        }
 
         return list.slice().sort((a, b) => {
           if (mode === "Amtsjahre") {
-            const byService = a.Amtsdauer - b.Amtsdauer;
-            if (byService !== 0) return byService;
+              const groupDifference =
+                amtsjahreGroups.indexOf(amtsjahreGroup(a.Amtsdauer)) -
+                amtsjahreGroups.indexOf(amtsjahreGroup(b.Amtsdauer));
+              if (groupDifference !== 0) return groupDifference;
+              if (a.Amtsdauer !== b.Amtsdauer) return a.Amtsdauer - b.Amtsdauer;
           }
 
           if (mode && mode !== "default" && mode !== "Amtsjahre") {
             const av = valueForGrouping(a, mode);
             const bv = valueForGrouping(b, mode);
-            const order = characteristicOrder[mode];
+            const order = characteristicOrder;
             const ai = order ? order.indexOf(av) : -1;
             const bi = order ? order.indexOf(bv) : -1;
 
@@ -392,11 +417,10 @@
           return zugehoerigkeitColorScale(valueForGrouping(member, mode));
         }
 
-        const scale = d3.scaleSequential(d3.interpolateViridis)
-          .domain([0, Math.max(1, valueList.length - 1)]);
-
-        const index = valueList.indexOf(valueForGrouping(member, mode));
-        return scale(index >= 0 ? index : 0);
+        if (mode === "Amtsjahre") {
+          const index = amtsjahreGroups.indexOf(amtsjahreGroup(member.Amtsdauer));
+          return amtsjahreColorScale()(index);
+        }
       }
 
       function groupAndSort(list, mode, sortMode = mode) {
@@ -406,6 +430,10 @@
 
         const groups = d3.group(list, d => valueForGrouping(d, mode));
         const entries = [...groups.entries()].sort((a, b) => {
+          if (mode === "Amtsjahre") {
+            return amtsjahreGroups.indexOf(a[0]) - amtsjahreGroups.indexOf(b[0]);
+          }
+
           const sizeDifference = b[1].length - a[1].length;
           if (sizeDifference !== 0) return sizeDifference;
 
@@ -504,10 +532,11 @@
             if (count > 0) entries.push({ label: category, count });
           });
         } else if (state.colorMode === "Amtsjahre") {
-          const years = [...new Set(members.map(member => member.Amtsdauer))].sort((a, b) => a - b);
-          years.forEach((year) => {
-            const count = members.filter(member => member.Amtsdauer === year).length;
-            entries.push({ label: `${year} Jahre`, count });
+          amtsjahreGroups.forEach((group) => {
+            const count = members.filter(member =>
+              amtsjahreGroup(member.Amtsdauer) === group
+            ).length;
+            if (count > 0) entries.push({ label: group, count });
           });
         }
 
@@ -610,10 +639,7 @@
         const groups = districtOrder.map(name => ({
           key: name,
           members: sortMembersByMode(rows.filter(d => d.Bezirk === name), state.colorMode)
-        })).sort((a, b) =>
-          b.members.length - a.members.length ||
-          districtOrder.indexOf(a.key) - districtOrder.indexOf(b.key)
-        );
+        }));
 
         const columns = 5;
         const groupWidth = 150;
@@ -741,7 +767,7 @@
               .on("mouseout", () => tooltip.style("display", "none"));
           });
 
-          const titleLines = drawGroupLabel(svg, groupX + 10, labelBaseY, `${group.key} Jahre`, 10);
+          const titleLines = drawGroupLabel(svg, groupX + 10, labelBaseY, group.key, 10);
           drawGroupStats(svg, groupX + 10, labelBaseY + titleLines * 12 + 16, group.members);
         });
 
@@ -834,30 +860,31 @@
         if (state.colorMode === "Bezirk") {
           districtOrder.forEach((district) => {
             const count = rows.filter(member => member.Bezirk === district).length;
-            entries.push({ label: `${district} (${count})`, color: districtColorScale(district) });
+            entries.push({ label: `${district} (${count})`, count, color: districtColorScale(district) });
           });
         } else if (state.colorMode === "Geschlecht") {
           const women = rows.filter(member => member.Geschlecht === "f").length;
           const men = rows.filter(member => member.Geschlecht === "m").length;
-          entries.push({ label: `Frauen (${women})`, color: "#f1d34c" });
-          entries.push({ label: `Männer (${men})`, color: "#2f9ea4" });
+          entries.push({ label: `Frauen (${women})`, count: women, color: "#f1d34c" });
+          entries.push({ label: `Männer (${men})`, count: men, color: "#2f9ea4" });
         } else if (state.colorMode === "Zugehörigkeit") {
           const colors = zugehoerigkeitColorScale.range();
           ["Arbeitnehmende", "Bäuerinnen und Bauern", "Gewerbe"].forEach((category, index) => {
             const count = rows.filter(member =>
               normalizeZugehoerigkeit(member.Zugehörigkeit) === category
             ).length;
-            entries.push({ label: `${category} (${count})`, color: colors[index] });
+            entries.push({ label: `${category} (${count})`, count, color: colors[index] });
           });
         } else if (state.colorMode === "Amtsjahre") {
-          const min = 1;
-          const max = Math.max(20, ...rows.map(d => d.Amtsdauer));
-          const scale = d3.scaleSequential(d3.interpolateViridis).domain([min, max]);
-          const labels = [min, Math.round((min + max) / 2), max];
-          labels.forEach((value) => {
-            const count = rows.filter(member => member.Amtsdauer === value).length;
-            entries.push({ label: `${value} Jahre (${count})`, color: scale(value) });
+          const scale = amtsjahreColorScale();
+          amtsjahreGroups.forEach((group, index) => {
+            const count = rows.filter(member => amtsjahreGroup(member.Amtsdauer) === group).length;
+            entries.push({ label: `${group} (${count})`, count, color: scale(index) });
           });
+        }
+
+        if (state.colorMode !== "Bezirk" && state.colorMode !== "Amtsjahre") {
+          entries.sort((a, b) => b.count - a.count);
         }
 
         entries.forEach(({ label, color }) => {
